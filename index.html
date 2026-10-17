@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KLR Fragen">
+<meta name="theme-color" content="#0b1626">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230b1626%22/><text x=%2250%22 y=%2268%22 font-size=%2256%22 font-family=%22Arial%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22%23ffb020%22>KLR</text></svg>">
+<title>KLR Lernfragen</title>
+<style>
+  :root{
+    --bg:#0b1626; --card:#122c4d; --card2:#183a63; --line:#24476f;
+    --text:#eaf1ff; --muted:#9db2d0; --accent:#ffb020; --accent-ink:#1a1200;
+    --green:#3ddc84; --green-bg:rgba(61,220,132,.16);
+    --red:#ff6b6b; --red-bg:rgba(255,107,107,.16);
+    --radius:14px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f2f5fa; --card:#ffffff; --card2:#eaf0f9; --line:#cdd7e6;
+      --text:#14213a; --muted:#5b6b86; --accent:#c77800; --accent-ink:#ffffff;
+      --green:#168a4a; --green-bg:rgba(22,138,74,.12);
+      --red:#cf3535; --red-bg:rgba(207,53,53,.10);
+    }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    min-height:100vh;min-height:100dvh;
+    font-size:17px;line-height:1.45;
+    touch-action:manipulation;
+  }
+  button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;}
+  .wrap{
+    max-width:760px;margin:0 auto;
+    padding:calc(18px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+  }
+  h1{font-size:1.7rem;margin:0 0 4px;letter-spacing:-.01em;}
+  h2{font-size:1.05rem;margin:26px 0 10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;}
+  .sub{color:var(--muted);margin:0 0 18px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+  .bar{height:8px;border-radius:99px;background:var(--card2);overflow:hidden;}
+  .bar>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s;}
+  .bar.green>i{background:var(--green);}
+  .small{font-size:.88rem;color:var(--muted);}
+
+  .btn{
+    display:block;width:100%;text-align:center;
+    padding:14px 16px;border-radius:12px;border:1px solid var(--line);
+    background:var(--card2);font-weight:600;
+  }
+  .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-size:1.05rem;}
+  .btn:active{transform:scale(.99);}
+  .btn[disabled]{opacity:.45;cursor:default;}
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+  .btn-link{background:none;border:none;color:var(--muted);padding:10px;text-decoration:underline;font-size:.9rem;}
+
+  .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:6px 0 14px;}
+  .seg button{padding:10px 0;border-radius:10px;border:1px solid var(--line);background:transparent;font-weight:600;}
+  .seg button.on{background:var(--accent);color:var(--accent-ink);border-color:transparent;}
+
+  .row{
+    display:block;width:100%;text-align:left;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin-bottom:8px;
+  }
+  .row .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:8px;font-weight:600;}
+  .row .top span:last-child{color:var(--muted);font-weight:500;font-size:.9rem;white-space:nowrap;}
+
+  /* Quiz */
+  .qtop{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .qtop .grow{flex:1;}
+  .qtop button.end{background:none;border:1px solid var(--line);border-radius:10px;padding:6px 12px;color:var(--muted);}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 10px;}
+  .chip{font-size:.78rem;padding:3px 10px;border-radius:99px;background:var(--card2);color:var(--muted);border:1px solid var(--line);}
+  .chip.type{color:var(--accent);border-color:var(--accent);background:transparent;}
+  .question{font-size:1.15rem;font-weight:600;white-space:pre-line;margin:0 0 16px;}
+  .ctx{white-space:pre-line;font-size:.95rem;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 14px;}
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+    padding:14px;border-radius:12px;border:2px solid var(--line);background:var(--card);
+  }
+  .opt .L{
+    flex:0 0 auto;width:28px;height:28px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--card2);font-weight:700;font-size:.9rem;
+  }
+  .opt .T{flex:1;padding-top:2px;}
+  .opt.tf{justify-content:center;font-weight:700;font-size:1.05rem;}
+  .opt:not([disabled]):active{border-color:var(--accent);}
+  .opt.correct{border-color:var(--green);background:var(--green-bg);}
+  .opt.correct .L{background:var(--green);color:#fff;}
+  .opt.wrong{border-color:var(--red);background:var(--red-bg);}
+  .opt.wrong .L{background:var(--red);color:#fff;}
+  .opt.dim{opacity:.55;}
+  .opt[disabled]{cursor:default;}
+
+  .fb{margin-top:16px;border-radius:var(--radius);padding:14px 16px;border:1px solid var(--line);background:var(--card);scroll-margin-bottom:96px;}
+  .fb.ok{border-color:var(--green);background:var(--green-bg);}
+  .fb.no{border-color:var(--red);background:var(--red-bg);}
+  .fb h3{margin:0 0 6px;font-size:1.05rem;}
+  .fb.ok h3{color:var(--green);} .fb.no h3{color:var(--red);}
+  .fb p{margin:6px 0 0;}
+  .fb .src{margin-top:8px;}
+  .next{
+    position:sticky;bottom:0;margin-top:14px;
+    padding:10px 0 calc(10px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top,var(--bg) 70%,transparent);
+  }
+
+  /* Ergebnis */
+  .score{font-size:3rem;font-weight:800;text-align:center;margin:6px 0 0;}
+  .score small{font-size:1.2rem;color:var(--muted);font-weight:600;}
+  .center{text-align:center;}
+  details.wr{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;padding:0 14px;}
+  details.wr summary{padding:12px 0;cursor:pointer;font-weight:600;white-space:pre-line;}
+  details.wr .in{padding:0 0 12px;}
+  .ans-ok{color:var(--green);font-weight:600;} .ans-no{color:var(--red);font-weight:600;}
+  .hidden{display:none;}
+  @media (min-width:700px){
+    body{font-size:18px;}
+    .question{font-size:1.25rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+const T1='Rechnungswesen & Grundbegriffe';
+const T2='Kostentheorie & Break-even';
+const T3='Kostenrechnungssysteme';
+const T4='Kostenartenrechnung';
+const T5='Kostenstellen & BAB';
+const T6='Kostenträgerrechnung';
+const T7='Teilkosten & Entscheidungen';
+const T8='Plankosten & neuere Ansätze';
+const TOPICS=[T1,T2,T3,T4,T5,T6,T7,T8];
+const KINDS={v:'Verständnisfrage',f:'Richtig oder falsch',r:'Rechenaufgabe'};
+const KINDS_PL={v:'Verständnisfragen',f:'Richtig-/Falsch-Aussagen',r:'Rechenaufgaben'};
+
+const QS=[];
+// Q: Verständnisfrage, erste Option ist richtig, Reihenfolge wird gemischt
+const Q=(t,q,o,e,s)=>QS.push({t,q,o,a:0,e,s,k:'v',shuffle:true});
+// C: Rechenaufgabe, a = Index der richtigen Option (Reihenfolge wird zur Laufzeit gemischt)
+const C=(t,q,o,a,e,s)=>QS.push({t,q,o,a,e,s,k:'r',shuffle:true});
+// RF: Richtig/Falsch-Aussage
+const RF=(t,q,ok,e,s)=>QS.push({t,q,o:['Richtig','Falsch'],a:ok?0:1,e,s,k:'f',shuffle:false});
+
+/* ===== T1: Rechnungswesen & Grundbegriffe ===== */
+const MARZ =
+"Geschäftsvorfälle im März:\n" +
+"(1) Materiallieferung, Rechnung 24.000 €, Zahlungsziel 4 Wochen.\n" +
+"(2) Barverkauf von Produkten: 12.000 €.\n" +
+"(3) Zahlung Löhne/Gehälter März 16.700 € plus Nachzahlung für Februar 3.300 €.\n" +
+"(4) Kunde überweist im März eine Lieferung aus Januar: 25.000 €.\n" +
+"(5) Verkauf einer gebrauchten Maschine (Buchwert 5.000 €) für 6.800 € auf Ziel.\n" +
+"(6) Zahlung einer fälligen Lieferantenrechnung (5.000 €) wird auf April verschoben.\n" +
+"(7) Kauf von Vorprodukten 5.000 €, Barzahlung.\n" +
+"(8) Rechnung Best-Consult für Beratung im März: 700 €.\n" +
+"(9) Versand/Rechnung Waren 48.500 €; Kunde hatte im Januar 40.000 € angezahlt, Rest wird im März überwiesen.\n" +
+"(10) Spende an die örtliche Schule: 300 € bar.\n" +
+"(11) Kalkulatorischer Unternehmerlohn März: 8.000 €.\n" +
+"(12) Rückstellung für Weihnachtsgeld: 1.000 €.";
+
+Q(T1,"Welchen Zweck verfolgt die Kosten- und Leistungsrechnung (KLR) in erster Linie?",
+ ["Informationen für Planung, Steuerung und Kontrolle des Managements bereitstellen",
+  "Vermögens- und Ertragslage für Gläubiger und Finanzamt darstellen",
+  "Die Steuerbemessungsgrundlage ermitteln",
+  "Den Jahresabschluss nach HGB aufstellen"],
+ "Die KLR ist internes Rechnungswesen: Sie liefert dem Management Daten zur Planung, Steuerung und Kontrolle. Bilanz und GuV (externes Rechnungswesen) richten sich an Externe.");
+
+Q(T1,"Wer sind die typischen Adressaten der KLR?",
+ ["Unternehmensführung und interne Entscheidungsträger",
+  "Anteilseigner, Gläubiger und Finanzamt",
+  "Ausschließlich das Finanzamt",
+  "Die interessierte Öffentlichkeit"],
+ "Die KLR ist intern ausgerichtet. Externe Adressaten bedient die Finanzbuchführung.");
+
+Q(T1,"Welche Aussage zum Unterschied zwischen Finanzbuchführung und KLR stimmt?",
+ ["Die Finanzbuchführung ist gesetzlich normiert (HGB, Steuerrecht), die KLR kann unternehmensindividuell gestaltet werden",
+  "Die KLR ist durch HGB und GoB normiert, die Finanzbuchführung ist frei gestaltbar",
+  "Beide sind gesetzlich normiert und müssen veröffentlicht werden",
+  "Beide sind frei gestaltbar und werden nicht veröffentlicht"],
+ "Die KLR hat keine gesetzlichen Grundlagen und wird nicht veröffentlicht. Die Finanzbuchführung folgt HGB, EStG, AO, GoB bzw. IFRS.");
+
+Q(T1,"Was ist der Gegenstand der KLR?",
+ ["Das Betriebsergebnis (Leistung – Kosten)",
+  "Das Gesamtergebnis der GuV (Ertrag – Aufwand)",
+  "Der Zahlungsmittelbestand",
+  "Das Eigenkapital laut Bilanz"],
+ "Die KLR bildet das betriebliche Ergebnis ab. Das neutrale Ergebnis (nicht betriebszweckbezogen) wird abgegrenzt.");
+
+Q(T1,"Wie ist das Betriebsergebnis definiert?",
+ ["Leistung – Kosten","Ertrag – Aufwand","Einnahmen – Ausgaben","Einzahlungen – Auszahlungen"],
+ "Betriebsergebnis = Leistung – Kosten. Ertrag – Aufwand ist das Gesamtergebnis der Finanzbuchführung.");
+
+Q(T1,"Wie sind Kosten definiert?",
+ ["Bewerteter, betriebszweckbezogener Verzehr von Gütern und Dienstleistungen",
+  "Jede Auszahlung einer Periode",
+  "Jeder Aufwand der Finanzbuchführung",
+  "Jede Ausgabe, die das Geldvermögen mindert"],
+ "Kosten sind der wertmäßige Input für die Herstellung und den Absatz betrieblicher Leistungen. Nicht jede Auszahlung oder jeder Aufwand ist Kosten.");
+
+Q(T1,"Was versteht man unter Leistung in der KLR?",
+ ["Bewertete Güter und Dienstleistungen, die im betrieblichen Produktionsprozess erstellt werden (wertmäßiger Output, Erlöse)",
+  "Jede Einzahlung der Periode",
+  "Jeder Ertrag laut GuV",
+  "Die Produktionsmenge in Stück"],
+ "Leistung ist der wertmäßige Output des Betriebszwecks. Neutrale Erträge (z. B. Mieterträge) zählen nicht dazu.");
+
+Q(T1,"Was ergibt die Differenz Einzahlungen – Auszahlungen?",
+ ["Veränderung des Zahlungsmittelbestands (Kasse + Bankguthaben)",
+  "Veränderung des Geldvermögens",
+  "Veränderung des Reinvermögens",
+  "Betriebsergebnis"],
+ "Einzahlungen – Auszahlungen = Zahlungsmittelveränderung.");
+
+Q(T1,"Was ergibt die Differenz Einnahmen – Ausgaben?",
+ ["Veränderung des Geldvermögens",
+  "Veränderung des Zahlungsmittelbestands",
+  "Veränderung des Reinvermögens (Eigenkapital)",
+  "Betriebsbedingte Reinvermögensänderung"],
+ "Einnahmen – Ausgaben = Veränderung des Geldvermögens (Zahlungsmittel + Forderungen – Verbindlichkeiten).");
+
+Q(T1,"Was ergibt die Differenz Ertrag – Aufwand?",
+ ["Veränderung des Reinvermögens (Eigenkapital)",
+  "Veränderung des Zahlungsmittelbestands",
+  "Veränderung des Geldvermögens",
+  "Betriebsergebnis der KLR"],
+ "Ertrag – Aufwand = Gesamtergebnis der Finanzbuchführung = Änderung des Reinvermögens.");
+
+Q(T1,"Was ergibt die Differenz Leistung – Kosten?",
+ ["Betriebsbedingte Reinvermögensänderung (Änderung des Betriebsvermögens)",
+  "Veränderung des Geldvermögens",
+  "Neutrales Ergebnis",
+  "Veränderung des Zahlungsmittelbestands"],
+ "Leistung – Kosten = Betriebsergebnis = betriebsbedingte Reinvermögensänderung.");
+
+Q(T1,"Wie setzt sich das Geldvermögen zusammen?",
+ ["Zahlungsmittel + Forderungen – Verbindlichkeiten",
+  "Kasse + Vorräte",
+  "Reinvermögen + Verbindlichkeiten",
+  "Zahlungsmittel + Anlagevermögen"],
+ "Geldvermögen = Zahlungsmittel + Forderungen – Verbindlichkeiten. Zahlungsmittel = Kasse + verfügbare Bankguthaben.");
+
+Q(T1,"Ein Kunde überweist im März eine Rechnung für eine Lieferung aus Januar. Was liegt im März vor?",
+ ["Eine Einzahlung, aber weder Einnahme noch Ertrag des März",
+  "Einzahlung, Einnahme und Ertrag",
+  "Eine Einnahme, aber keine Einzahlung",
+  "Weder Einzahlung noch Einnahme"],
+ "Einnahme und Ertrag entstanden bereits im Januar bei Rechnungsstellung (Forderung). Im März ändert sich nur der Zahlungsmittelbestand.");
+
+Q(T1,"Material wird auf Ziel geliefert (Zahlungsziel 4 Wochen). Was gilt zum Zeitpunkt der Lieferung?",
+ ["Ausgabe (Verbindlichkeit), aber keine Auszahlung",
+  "Auszahlung, aber keine Ausgabe",
+  "Auszahlung und Ausgabe",
+  "Weder Ausgabe noch Auszahlung"],
+ "Die Verbindlichkeit mindert das Geldvermögen (Ausgabe). Der Zahlungsmittelabfluss (Auszahlung) folgt erst bei Bezahlung.");
+
+Q(T1,"Eine Spende von 300 € wird bar an die örtliche Schule gezahlt. Wie ist das einzuordnen?",
+ ["Auszahlung, Ausgabe und Aufwand, aber keine Kosten (neutraler Aufwand)",
+  "Auszahlung, Ausgabe, Aufwand und Kosten",
+  "Nur Auszahlung",
+  "Zusatzkosten"],
+ "Die Spende ist nicht betriebszweckbezogen und damit neutraler Aufwand ohne Kostencharakter.");
+
+Q(T1,"Für den Firmeninhaber werden 8.000 € kalkulatorischer Unternehmerlohn verrechnet. Wie ist das einzuordnen?",
+ ["Kosten (Zusatzkosten), aber weder Aufwand noch Auszahlung",
+  "Aufwand und Kosten",
+  "Auszahlung und Ausgabe",
+  "Neutraler Aufwand"],
+ "Der Unternehmerlohn wird in der Finanzbuchführung nicht gebucht (durch den Gewinn abgegolten), in der KLR aber als Zusatzkosten angesetzt.");
+
+Q(T1,"Für Weihnachtsgeld wird eine Rückstellung von 1.000 € gebildet. Was gilt?",
+ ["Aufwand und Kosten, aber noch keine Auszahlung",
+  "Auszahlung und Aufwand",
+  "Weder Aufwand noch Kosten",
+  "Neutraler Aufwand"],
+ "Die Rückstellung verteilt den Personalaufwand periodengerecht. Die Auszahlung erfolgt erst später.");
+
+Q(T1,"Welche Posten gehören typischerweise zum neutralen Aufwand?",
+ ["Spenden, Restrukturierungs- bzw. Abfindungsaufwand, Schäden aus Unterschlagung",
+  "Materialverbrauch, Fertigungslöhne, Energiekosten",
+  "Kalkulatorische Zinsen und kalkulatorischer Unternehmerlohn",
+  "Fertigungsmaterial und Hilfsstoffe"],
+ "Neutral sind betriebsfremde, außerordentliche und periodenfremde Aufwendungen.");
+
+Q(T1,"Welche drei Arten neutraler Aufwendungen und Erträge werden unterschieden?",
+ ["Betriebsfremd, außerordentlich, periodenfremd",
+  "Fix, variabel, sprungfix",
+  "Einzel-, Gemein-, Sonderkosten",
+  "Grund-, Zusatz-, Anderskosten"],
+ "Neutrales Ergebnis: betriebsfremd (z. B. Mieterträge, Spenden), außerordentlich (z. B. Restrukturierung), periodenfremd (z. B. Auflösung Rückstellung, Steuernachzahlung).");
+
+Q(T1,"Was sind Zusatzkosten?",
+ ["Kosten, denen kein Aufwand gegenübersteht (z. B. kalkulatorischer Unternehmerlohn)",
+  "Aufwand ohne Kostencharakter",
+  "Kosten, denen Aufwand in anderer Höhe gegenübersteht",
+  "Kosten, die direkt einem Kostenträger zugerechnet werden"],
+ "Zusatzkosten sind kalkulatorische Kosten ohne Aufwandsgegenstück, z. B. Unternehmerlohn, kalkulatorische Miete, Eigenkapitalzinsen.");
+
+Q(T1,"Was sind Anderskosten?",
+ ["Kosten, denen Aufwand in anderer Höhe gegenübersteht (z. B. kalk. Abschreibung auf Wiederbeschaffungswert)",
+  "Kosten ohne jeden Aufwand",
+  "Neutrale Aufwendungen",
+  "Kosten, die nur im Vertrieb anfallen"],
+ "Anderskosten entstehen durch abweichende Bewertung in der KLR (z. B. Abschreibung auf Wiederbeschaffungskosten statt Anschaffungskosten).");
+
+Q(T1,"Wie heißen Kosten, die zugleich Aufwand in gleicher Höhe sind?",
+ ["Grundkosten (Zweckaufwand)","Zusatzkosten","Anderskosten","Neutrale Kosten"],
+ "Grundkosten = betrieblicher Aufwand (Zweckaufwand), z. B. Materialverbrauch, Löhne.");
+
+Q(T1,"Kosten = Aufwand – neutraler Aufwand + kalkulatorische Kosten. Welche Aussage dazu stimmt?",
+ ["Kalkulatorische Kosten setzen sich aus Anderskosten und Zusatzkosten zusammen",
+  "Kalkulatorische Kosten sind immer Auszahlungen",
+  "Kalkulatorische Kosten erscheinen in der GuV",
+  "Kalkulatorische Kosten sind neutraler Aufwand"],
+ "Kalkulatorische Kosten (Anders- und Zusatzkosten) stehen nur in der KLR, nicht in der GuV, und führen nicht zu Auszahlungen.");
+
+Q(T1,"Welche Frage beantwortet die Kostenartenrechnung?",
+ ["Welche Kosten sind in welcher Höhe angefallen?",
+  "Wo sind die Kosten angefallen?",
+  "Wofür (für welchen Kostenträger) sind die Kosten angefallen?",
+  "Wie hoch ist der Gewinn je Produkt?"],
+ "Kostenarten = Erfassung und Gliederung der Kosten.");
+
+Q(T1,"Welche Frage beantwortet die Kostenstellenrechnung?",
+ ["Wo sind welche Kosten in welcher Höhe angefallen?",
+  "Welche Kosten sind angefallen?",
+  "Wofür sind die Kosten angefallen?",
+  "Wie hoch sind die Zahlungsmittel?"],
+ "Kostenstellen = Ort der Kostenentstehung; Verteilung der Gemeinkosten auf Kostenstellen.");
+
+Q(T1,"Welche Frage beantwortet die Kostenträgerrechnung?",
+ ["Wofür (für welches Produkt bzw. welche Leistung) sind die Kosten angefallen?",
+  "Welche Kosten sind angefallen?",
+  "Wo sind die Kosten angefallen?",
+  "Welche Kosten sind fix?"],
+ "Kostenträgerrechnung = Kalkulation, Ermittlung der Stückkosten und des Erfolgs je Produkt.");
+
+Q(T1,"Welche Reihenfolge ist in der klassischen Kostenrechnung richtig?",
+ ["Kostenartenrechnung → Kostenstellenrechnung → Kostenträgerrechnung",
+  "Kostenträgerrechnung → Kostenstellenrechnung → Kostenartenrechnung",
+  "Kostenstellenrechnung → Kostenartenrechnung → Kostenträgerrechnung",
+  "Kostenartenrechnung → Kostenträgerrechnung → Kostenstellenrechnung"],
+ "Die Kostenstellenrechnung ist das Bindeglied zwischen Kostenarten- und Kostenträgerrechnung.");
+
+Q(T1,"Welchen Zeitbezug kann die KLR haben?",
+ ["Vergangenheitsbezogen (Ist, Normal) und zukunftsbezogen (Plan)",
+  "Nur vergangenheitsbezogen",
+  "Nur zukunftsbezogen",
+  "Keinen, sie ist zeitlos"],
+ "Die Finanzbuchführung ist vergangenheitsorientiert, die KLR kann zusätzlich Plankosten abbilden.");
+
+Q(T1,"Welche Entscheidung wird typischerweise durch die KLR unterstützt?",
+ ["Eigenfertigung oder Fremdbezug",
+  "Wahl der Rechtsform",
+  "Höhe der Gewinnausschüttung",
+  "Aufstellung des Anhangs"],
+ "Typische KLR-Entscheidungen: Preisuntergrenze, Sortiment, Eigenfertigung vs. Fremdbezug, Art/Menge der Produkte, Vertriebswege.");
+
+Q(T1,"Wofür wird die Kostenrechnung bei der Bewertung benötigt?",
+ ["Ermittlung der Herstellkosten für Halb-/Fertigfabrikate und selbsterstellte Anlagen",
+  "Ermittlung der Körperschaftsteuer",
+  "Festlegung der Dividende",
+  "Ermittlung des Zahlungsmittelbestands"],
+ "Bewertung ist eine der drei KLR-Aufgaben neben Steuerung/Entscheidung und Überwachung/Wirtschaftlichkeitskontrolle.");
+
+Q(T1,"Der Kauf einer Maschine gegen Banküberweisung führt zunächst zu …",
+ ["Auszahlung und Ausgabe, aber (noch) nicht zu Aufwand",
+  "Auszahlung und Aufwand in voller Höhe",
+  "Aufwand und Kosten in voller Höhe",
+  "Einzahlung und Einnahme"],
+ "Die Anschaffung ist ein Aktivtausch. Aufwand entsteht erst durch Abschreibungen über die Nutzungsdauer.");
+
+RF(T1,"Die Finanzbuchführung bildet alle Vorgänge ab, die sich zwischen dem Unternehmen und der Umwelt abspielen.",true,
+ "Die Finanzbuchführung erfasst die Außenbeziehungen des Unternehmens.","Übungsblatt Multiple Choice");
+RF(T1,"Die Finanzbuchführung ist der einzige Bestandteil des Rechnungswesens.",false,
+ "Zum Rechnungswesen gehören auch KLR, Investitionsrechnung und Finanzrechnung.","Übungsblatt Multiple Choice");
+RF(T1,"Die Finanzbuchführung findet ihren Abschluss ausschließlich in der GuV.",false,
+ "Abschluss sind Bilanz und GuV (beide).","Übungsblatt Multiple Choice");
+RF(T1,"Die Kosten- und Leistungsrechnung ist nach Handelsrecht und GoB eine normierte Rechnung zur Ermittlung des Betriebsergebnisses.",false,
+ "Die KLR ist gesetzlich nicht normiert, sondern unternehmensindividuell gestaltbar.","Übungsblatt Multiple Choice");
+RF(T1,"Die Kosten- und Leistungsrechnung ist ein Instrument zur Wirtschaftlichkeitskontrolle.",true,
+ "Soll-Ist-Vergleiche, Zeitvergleiche und Betriebsvergleiche gehören dazu.","Übungsblatt Multiple Choice");
+RF(T1,"Die Kosten- und Leistungsrechnung liefert Informationen für die Wahl zwischen Fremdbezug und Eigenfertigung.",true,
+ "Das ist eine klassische Entscheidungshilfe der KLR.","Übungsblatt Multiple Choice");
+RF(T1,"Die Kosten- und Leistungsrechnung liefert Informationen über die Liquidität eines Unternehmens.",false,
+ "Liquidität ist Gegenstand der Finanzrechnung (Zahlungsströme), nicht der KLR.","Übungsblatt Multiple Choice");
+RF(T1,"Kosten werden als bewerteter Verzehr von Produktionsfaktoren definiert.",true,
+ "Verzehr (Menge) mal Bewertung (Preis).","Übungsblatt Multiple Choice");
+RF(T1,"Kosten werden ausschließlich vergangenheitsbezogen ermittelt.",false,
+ "Neben Ist-Kosten gibt es Normal- und Plankosten (zukunftsbezogen).","Übungsblatt Multiple Choice");
+RF(T1,"Kosten setzen sich aus betrieblichen und neutralen Aufwendungen zusammen.",false,
+ "Neutrale Aufwendungen sind keine Kosten.","Übungsblatt Multiple Choice");
+RF(T1,"Die Zahlung von Spenden an den Sportverein ist in der Kosten- und Leistungsrechnung zu berücksichtigen.",false,
+ "Spenden sind neutraler Aufwand (nicht betriebszweckbezogen).","Übungsblatt Multiple Choice");
+RF(T1,"Die Aufnahme und Tilgung eines Darlehens ist in der Kosten- und Leistungsrechnung zu berücksichtigen.",false,
+ "Darlehensaufnahme und -tilgung sind Finanzierungsvorgänge ohne Kostencharakter (Zinsen sind anders zu beurteilen).","Übungsblatt Multiple Choice");
+RF(T1,"Der Verkauf von Wertpapieren, die zur Spekulation gehalten wurden, ist in der Kosten- und Leistungsrechnung zu berücksichtigen.",false,
+ "Das ist ein betriebsfremder Vorgang.","Übungsblatt Multiple Choice");
+RF(T1,"Abfindungszahlungen wegen einer Restrukturierung gehören zu den betrieblichen Aufwendungen, die als Kosten angesetzt werden.",false,
+ "Das ist außerordentlicher Aufwand und damit neutral.","Übungsblatt Multiple Choice");
+RF(T1,"Kalkulatorische Kosten sind Entgelte für die Mitarbeit der Gesellschafter bei Personengesellschaften.",true,
+ "Das ist der kalkulatorische Unternehmerlohn.","Übungsblatt Multiple Choice");
+RF(T1,"Kalkulatorische Kosten sind Kosten, denen keine Aufwendungen bzw. Aufwendungen in anderer Höhe gegenüberstehen.",true,
+ "Zusatzkosten (kein Aufwand) und Anderskosten (Aufwand in anderer Höhe).","Übungsblatt Multiple Choice");
+RF(T1,"Kalkulatorische Kosten führen immer zu Auszahlungen.",false,
+ "Sie sind rein rechnerische Kosten ohne Zahlungsvorgang.","Übungsblatt Multiple Choice");
+RF(T1,"Kalkulatorische Kosten werden ausschließlich bei der Vorkalkulation von Produktkosten zur Preisbestimmung berücksichtigt.",false,
+ "Sie gehen generell in die Kostenrechnung ein.","Übungsblatt Multiple Choice");
+RF(T1,"Umsatzerlöse aus dem Verkauf von Waren sind Bestandteil der betrieblichen Erträge.",true,
+ "Sie sind Grundleistung des Betriebszwecks.","Übungsblatt Multiple Choice");
+RF(T1,"Der Verkauf eines nicht genutzten LKW über Buchwert ist Bestandteil der betrieblichen Erträge.",false,
+ "Der Mehrerlös über dem Buchwert ist neutraler Ertrag.","Übungsblatt Multiple Choice");
+RF(T1,"Dividenden aus Beteiligungen sind Bestandteil der betrieblichen Erträge.",false,
+ "Erträge aus Beteiligungen sind betriebsfremd.","Übungsblatt Multiple Choice");
+RF(T1,"Kalkulatorische Kosten beeinflussen nur die Kosten- und Leistungsrechnung, nicht die GuV.",true,
+ "Sie werden ausschließlich in der KLR angesetzt.","Übungsblatt Multiple Choice");
+
+C(T1,MARZ + "\n\nWie hoch sind die Einzahlungen im März?",
+ ["25.000 €","37.000 €","45.500 €","67.300 €"],2,
+ "Einzahlungen: (2) 12.000 + (4) 25.000 + (9) 8.500 = 45.500 €. In (9) fließen nur 8.500 € zu, 40.000 € waren im Januar angezahlt.","Übung Teil 1");
+C(T1,MARZ + "\n\nWie hoch sind die Auszahlungen im März?",
+ ["20.000 €","25.300 €","46.700 €","49.300 €"],1,
+ "Auszahlungen: (3) 20.000 (inkl. Nachzahlung) + (7) 5.000 + (10) 300 = 25.300 €. (1), (6), (8), (11), (12) sind keine Auszahlungen.","Übung Teil 1");
+C(T1,MARZ + "\n\nWie hoch ist die Veränderung des Zahlungsmittelbestands im März?",
+ ["+ 20.200 €","+ 20.600 €","+ 26.400 €","+ 43.600 €"],0,
+ "Einzahlungen 45.500 – Auszahlungen 25.300 = + 20.200 €.","Übung Teil 1");
+C(T1,MARZ + "\n\nWie hoch ist die Veränderung des Geldvermögens (Einnahmen 67.300 €, Ausgaben 46.700 €)?",
+ ["+ 20.200 €","+ 20.600 €","+ 22.000 €","+ 43.600 €"],1,
+ "Einnahmen (2) 12.000 + (5) 6.800 + (9) 48.500 = 67.300 €. Ausgaben (1) 24.000 + (3) 16.700 + (7) 5.000 + (8) 700 + (10) 300 = 46.700 €. Differenz = 20.600 €.","Übung Teil 1");
+C(T1,MARZ + "\n\nWie hoch ist die Leistung im März?",
+ ["48.500 €","55.300 €","60.500 €","67.300 €"],2,
+ "Leistung sind nur die Erlöse aus dem Betriebszweck: (2) 12.000 + (9) 48.500 = 60.500 €. Der Verkauf der Maschine (5) ist keine Leistung.","Übung Teil 1");
+C(T1,MARZ + "\n\nWie hoch ist das neutrale Ergebnis aus den Vorfällen (5) und (10)?",
+ ["– 300 €","+ 1.200 €","+ 1.500 €","+ 6.800 €"],2,
+ "Neutraler Ertrag aus (5): 6.800 – 5.000 = 1.800 €. Neutraler Aufwand aus (10): 300 €. Neutrales Ergebnis = 1.800 – 300 = 1.500 €.","Übung Teil 1");
+C(T1,"Ein Unternehmen verkauft eine gebrauchte Maschine mit Buchwert 5.000 € für 6.800 € auf Ziel. Wie hoch ist der neutrale Ertrag?",
+ ["1.000 €","1.800 €","5.000 €","6.800 €"],1,
+ "Nur der Mehrerlös über dem Buchwert (1.800 €) ist neutraler Ertrag. Es ist eine Einnahme (Forderung), aber noch keine Einzahlung.","Übung Teil 1");
+
+/* ===== T2: Kostentheorie & Break-Even ===== */
+Q(T2,"Was beschreibt die Produktionsfunktion?",
+ ["Die mengenmäßige Beziehung zwischen Faktoreinsatz und Ausbringungsmenge",
+  "Die wertmäßige Beziehung zwischen Ausbringungsmenge und Kosten",
+  "Die Beziehung zwischen Preis und Absatzmenge",
+  "Die Beziehung zwischen Gewinn und Eigenkapital"],
+ "Produktionsfunktion: x = f(r1, …, rn) (mengenmäßig). Kostenfunktion: K = f(x) (wertmäßig).");
+
+Q(T2,"Welcher der folgenden Faktoren ist KEIN Bestimmungsfaktor der Kosten?",
+ ["Der Verkaufspreis des Produkts","Die Beschäftigung (Ausbringungsmenge)","Die Faktorpreise","Das Produktionsverfahren"],
+ "Kostenbestimmend: Beschäftigung, Faktorpreise, Faktorqualität, Betriebsgröße, Produktionsverfahren. Der Verkaufspreis beeinflusst den Erlös, nicht die Kosten.");
+
+Q(T2,"Wie ist der Beschäftigungsgrad definiert?",
+ ["Beschäftigung in Prozent der Gesamtkapazität","Fixe Kosten in Prozent der Gesamtkosten","Variable Kosten je Stück","Menge mal Verkaufspreis"],
+ "Beschäftigungsgrad = Beschäftigung (z. B. Ausbringungsmenge) im Verhältnis zur Gesamtkapazität.");
+
+Q(T2,"Wie berechnen sich die Durchschnittskosten (Stückkosten) k?",
+ ["k = K / x","k = K · x","k = dK / dx","k = Kfix + Kvar"],
+ "Durchschnittskosten = Gesamtkosten geteilt durch die Ausbringungsmenge. dK/dx sind die Grenzkosten.");
+
+Q(T2,"Was sind Grenzkosten K'?",
+ ["Der Kostenzuwachs durch die Produktion der jeweils letzten Mengeneinheit (dK/dx)",
+  "Gesamtkosten geteilt durch die Menge",
+  "Fixe Kosten je Stück",
+  "Die höchstzulässigen Kosten"],
+ "Grenzkosten sind die Kosten der letzten zusätzlichen Einheit. Fixkosten haben darauf keinen Einfluss.");
+
+Q(T2,"Welche Größe bleibt bei einem linearen Gesamtkostenverlauf konstant?",
+ ["Die Grenzkosten","Die Stückkosten","Die Gesamtkosten","Die fixen Kosten je Stück"],
+ "Bei K = Kfix + kvar · x sind die Grenzkosten gleich den variablen Stückkosten kvar, also konstant.");
+
+Q(T2,"Was passiert mit den fixen Kosten je Stück, wenn die Ausbringungsmenge steigt?",
+ ["Sie sinken (Fixkostendegression)","Sie steigen","Sie bleiben konstant","Sie werden null"],
+ "Fixkosten verteilen sich auf mehr Stück: Kostendegression.");
+
+Q(T2,"Welches Beispiel passt zu fixen Kosten?",
+ ["Kalkulatorische Abschreibung oder Miete","Fertigungsmaterial","Akkordlohn","Verpackungsmaterial je Stück"],
+ "Fixkosten fallen unabhängig von der Menge an (Betriebsbereitschaft): Abschreibung, Miete, Gehälter.");
+
+Q(T2,"Welche Kostenverläufe zählen zu den variablen Kosten?",
+ ["Proportional, degressiv, progressiv und regressiv","Nur proportional","Nur sprungfixe","Fix und sprungfix"],
+ "Variable Kosten: proportional (linear), degressiv, progressiv, regressiv. Daneben gibt es fixe und sprungfixe Kosten.");
+
+Q(T2,"Was sind sprungfixe (intervallfixe) Kosten?",
+ ["Fixkosten, die bei Erreichen einer Kapazitätsgrenze sprunghaft steigen (z. B. zusätzliche Maschine)",
+  "Kosten, die proportional zur Menge steigen",
+  "Kosten, die nur einmalig anfallen",
+  "Kosten, die mit der Menge sinken"],
+ "Innerhalb eines Intervalls sind die Kosten fix, bei Überschreiten springen sie auf ein höheres Niveau.");
+
+Q(T2,"Die Gesamtkosten steigen überproportional zur Menge. Wie nennt man diesen Kostenverlauf?",
+ ["Progressiv","Degressiv","Proportional","Regressiv"],
+ "Progressiv = überproportional steigend. Degressiv = unterproportional steigend.");
+
+Q(T2,"Welche Produktionsfunktion liegt der linearen Gesamtkostenfunktion zugrunde?",
+ ["Typ B (Gutenberg) bei konstanter Intensität","Typ A (Gesetz vom abnehmenden Ertragszuwachs)","Eine Cobb-Douglas-Funktion","Keine, sie ist willkürlich"],
+ "Typ B führt zu linearen Kostenverläufen und wird in der Praxis vor allem für Kostenstellen, Arbeitsplätze und Produkte verwendet. Typ A führt zu S-förmigen Kosten.");
+
+Q(T2,"Welche Gesamtkostenfunktion ergibt sich aus der Produktionsfunktion Typ A (Ertragsgesetz)?",
+ ["Eine S-förmige Gesamtkostenfunktion","Eine lineare Funktion","Eine konstante Funktion","Eine fallende Funktion"],
+ "Typ A basiert auf dem Gesetz vom abnehmenden Ertragszuwachs.");
+
+Q(T2,"Wie verläuft die Umsatzfunktion im Polypol?",
+ ["Linear steigend (U = x · p), da der Preis konstant ist","Konstant","S-förmig","Fallend"],
+ "Im Polypol kann ein einzelner Anbieter den Marktpreis nicht beeinflussen.");
+
+Q(T2,"Was bezeichnet der Break-even-Point (Gewinnschwelle)?",
+ ["Die Menge, bei der die Umsatzerlöse die Gesamtkosten decken (U = K)",
+  "Die Menge mit dem höchsten Gewinn",
+  "Die Menge, bei der die Stückkosten minimal sind",
+  "Die Menge, bei der variable gleich fixe Kosten sind"],
+ "Break-even: Gewinn = 0, also U = K bzw. DB · x = Kfix.");
+
+Q(T2,"Was ist die langfristige Preisuntergrenze?",
+ ["Der Preis, bei dem fixe und variable Kosten gedeckt sind (Stückkosten)",
+  "Der Preis, der nur die variablen Stückkosten deckt",
+  "Der Grenzumsatz",
+  "Der Preis, der den Gewinn maximiert"],
+ "Langfristig müssen alle Kosten gedeckt werden: Preis ≥ Stückkosten (Vollkosten).");
+
+Q(T2,"Was ist die kurzfristige Preisuntergrenze?",
+ ["Die variablen Stückkosten","Die Vollkosten je Stück","Die fixen Stückkosten","Selbstkosten plus Gewinnaufschlag"],
+ "Kurzfristig sind die Fixkosten sunk costs. Entscheidend ist, dass die variablen Kosten gedeckt werden (Deckungsbeitrag ≥ 0).");
+
+Q(T2,"Bei linearem Kostenverlauf und konstantem Preis über den variablen Stückkosten: Wo liegt das Gewinnmaximum?",
+ ["An der Kapazitätsgrenze","Im Break-even-Point","Bei der halben Kapazität","Bei der Menge mit den niedrigsten Stückkosten"],
+ "Jede zusätzliche Einheit bringt den gleichen positiven Deckungsbeitrag. Der Gewinn steigt daher bis zur Kapazitätsgrenze.");
+
+Q(T2,"Wie verhalten sich die Grenzkosten zu den variablen Stückkosten bei linearem Gesamtkostenverlauf?",
+ ["Sie sind gleich","Die Grenzkosten sind höher","Die Grenzkosten sind niedriger","Es besteht kein Zusammenhang"],
+ "K' = kvar. Die Fixkosten fallen beim Ableiten weg.");
+
+RF(T2,"Variable Kosten verlaufen immer proportional.",false,
+ "Es gibt auch degressive, progressive und regressive variable Kostenverläufe.","Übungsblatt Multiple Choice");
+RF(T2,"Ein fixer Kostenverlauf führt zu steigenden Stückkosten.",false,
+ "Fixe Gesamtkosten führen zu sinkenden Stückkosten (Fixkostendegression).","Übungsblatt Multiple Choice");
+RF(T2,"Die Kosten für die Herstellung der letzten zusätzlichen Einheit werden als Grenzkosten bezeichnet.",true,
+ "Das ist die Definition von Grenzkosten.","Übungsblatt Multiple Choice");
+RF(T2,"Grenzkosten sind unabhängig von den Fixkosten.",true,
+ "Fixkosten fallen beim Ableiten nach der Menge weg.","Übungsblatt Multiple Choice");
+RF(T2,"Grenzkosten sind gleich den Gesamtkosten dividiert durch die Ausbringungsmenge.",false,
+ "Das sind die Durchschnittskosten (Stückkosten).","Übungsblatt Multiple Choice");
+RF(T2,"Bei steigendem Gesamtkostenverlauf sind die Grenzkosten immer positiv.",true,
+ "Steigende Gesamtkosten bedeuten einen positiven Kostenzuwachs je zusätzlicher Einheit.","Übungsblatt Multiple Choice");
+RF(T2,"Bei einem konstanten Gesamtkostenverlauf sinken die Stückkosten.",true,
+ "Gleich bleibende Gesamtkosten werden auf mehr Stück verteilt.","Übungsblatt Multiple Choice");
+RF(T2,"Degressive Kostenverläufe führen zu steigenden Stückkosten.",false,
+ "Degressive Kostenverläufe führen zu sinkenden Stückkosten.","Übungsblatt Multiple Choice");
+RF(T2,"Lineare Kostenverläufe haben konstante Grenzkosten.",true,
+ "Der Kostenzuwachs je Einheit ist immer gleich hoch.","Übungsblatt Multiple Choice");
+RF(T2,"Bei linearem Gesamtkostenverlauf ist die Grenzkostenkurve gleich der Kurve der variablen Stückkosten.",true,
+ "K' = kvar.","Übungsblatt Multiple Choice");
+RF(T2,"Gesamtkostenkurve und Grenzkostenkurve laufen immer parallel.",false,
+ "Die Grenzkostenkurve ist die Ableitung der Gesamtkostenkurve und hat eine andere Form.","Übungsblatt Multiple Choice");
+RF(T2,"Bei linearem Kostenverlauf steigen die Kosten mit jeder zusätzlichen Mengeneinheit in gleicher Höhe.",true,
+ "Der Zuwachs entspricht den konstanten Grenzkosten.","Übungsblatt Multiple Choice");
+
+C(T2,"Kostenfunktion K = 50 + 0,25 · x. Wie hoch sind die Gesamtkosten bei x = 200?",
+ ["50 €","75 €","100 €","150 €"],2,
+ "K = 50 + 0,25 · 200 = 100 €. Fixkosten 50 € + variable Kosten 50 €.","Skript 2.3");
+C(T2,"Kostenfunktion K = 500 + 20 · x, Verkaufspreis 40 € je Stück. Bei welcher Menge liegt der Break-even-Point?",
+ ["10 Stück","20 Stück","25 Stück","40 Stück"],2,
+ "40 x = 500 + 20 x → 20 x = 500 → x = 25 Stück (DB = 20 €, Kfix = 500 €).","Skript 2.5");
+C(T2,"Kostenfunktion K = 500 + 20 · x. Wie hoch sind die Stückkosten bei x = 50?",
+ ["20 €","25 €","30 €","40 €"],2,
+ "K = 500 + 20 · 50 = 1.500 €. Stückkosten = 1.500 / 50 = 30 €.","Skript 2.5");
+C(T2,"Kostenfunktion K = 500 + 20 · x, Preis 40 €. Wie hoch ist der Gewinn bei 40 Stück?",
+ ["100 €","200 €","300 €","500 €"],2,
+ "Umsatz 1.600 €, Kosten 500 + 800 = 1.300 €. Gewinn = 300 €.","Skript 2.5");
+C(T2,"Fixkosten 20.000 €. Wie hoch sind die fixen Stückkosten bei 500 Stück bzw. bei 2.000 Stück?",
+ ["40 € bzw. 10 €","10 € bzw. 40 €","40 € bzw. 40 €","20 € bzw. 20 €"],0,
+ "20.000 / 500 = 40 €; 20.000 / 2.000 = 10 € (Fixkostendegression).");
+C(T2,"Ein Ein-Produkt-Unternehmen hat fixe Kosten von 60.000 € je Monat und variable Kosten von 10 € je Stück (Kapazität 150.000 Stück/Monat). Der Preis beträgt 12 €. Wie hoch ist der Break-even-Point?",
+ ["5.000 Stück","6.000 Stück","30.000 Stück","60.000 Stück"],2,
+ "BEP = Kfix / (p – kvar) = 60.000 / (12 – 10) = 30.000 Stück.","Klausur 2023, Aufgabe 6a");
+C(T2,"Fixe Kosten 60.000 €/Monat, variable Kosten 10 €/Stück, erwartete Absatzmenge 100.000 Stück. Wie hoch ist die langfristige Preisuntergrenze?",
+ ["10,00 €","10,60 €","11,00 €","12,00 €"],1,
+ "Langfristig müssen alle Kosten gedeckt sein: 10 + 60.000 / 100.000 = 10,60 € je Stück.","Klausur 2023, Aufgabe 6b");
+C(T2,"Fixe Kosten 60.000 €/Monat, variable Kosten 10 €/Stück, Absatzmenge 100.000 Stück. Bis auf welchen Preis kann das Unternehmen kurzfristig heruntergehen?",
+ ["6,00 €","10,00 €","10,60 €","12,00 €"],1,
+ "Kurzfristige Preisuntergrenze = variable Stückkosten = 10 €.","Klausur 2023, Aufgabe 6c");
+C(T2,"Fixe Kosten 60.000 €/Monat, variable Kosten 10 €/Stück, Preis 12 €, Kapazität 150.000 Stück. Wie hoch ist der maximal mögliche Gewinn?",
+ ["120.000 €","180.000 €","240.000 €","300.000 €"],2,
+ "Gewinnmaximum an der Kapazitätsgrenze: 150.000 · 2 € – 60.000 € = 240.000 €.","Klausur 2023, Aufgabe 6d");
+C(T2,"Ein Möbelproduzent hat eine Kapazität von 1.200 Stühlen je Monat, fixe Kosten von 64.000 €, variable Kosten von 110 € je Stuhl und einen Preis von 190 €. Bei welcher Menge liegt der Break-even-Punkt?",
+ ["320 Stück","640 Stück","800 Stück","1.200 Stück"],2,
+ "BEP = 64.000 / (190 – 110) = 64.000 / 80 = 800 Stück.","Übung Fallbeispiel 6a");
+C(T2,"Break-even-Menge 800 Stück bei einer Kapazität von 1.200 Stück. Welchem Beschäftigungsgrad entspricht das?",
+ ["33 %","50 %","67 %","80 %"],2,
+ "800 / 1.200 = 66,7 % ≈ 67 %.","Übung Fallbeispiel 6b");
+C(T2,"Stühle: Kapazität 1.200 Stück, Fixkosten 64.000 €, variable Kosten 110 €, Preis 190 €. Wie hoch ist das Betriebsergebnis bei 85 % Beschäftigung?",
+ ["10.400 €","17.600 €","31.600 €","64.000 €"],1,
+ "85 % von 1.200 = 1.020 Stück. 1.020 · 190 = 193.800 € Umsatz; variable Kosten 112.200 €; fixe Kosten 64.000 €. Betriebsergebnis = 17.600 €.","Übung Fallbeispiel 6c");
+
+/* ===== T3: Kostenrechnungssysteme ===== */
+Q(T3,"Welches Prinzip der Kostenverrechnung rechnet Kosten nur den Kostenträgern bzw. Kostenstellen zu, die sie verursacht haben?",
+ ["Verursachungsprinzip (Teilkostenrechnung)","Durchschnittsprinzip (Vollkostenrechnung)","Tragfähigkeitsprinzip (Vollkostenrechnung)","Identitätsprinzip"],
+ "Fixe Kosten sind Kosten der Betriebsbereitschaft und werden nach dem Verursachungsprinzip nicht auf Produkte zugerechnet.");
+
+Q(T3,"Welches Prinzip rechnet sämtliche Kosten auf Kostenträger zu und verteilt Fixkosten über Schlüsselgrößen (teilweise willkürlich)?",
+ ["Durchschnittsprinzip (Vollkostenrechnung)","Verursachungsprinzip (Teilkostenrechnung)","Tragfähigkeitsprinzip","Opportunitätsprinzip"],
+ "Vollkostenrechnung nach dem Durchschnittsprinzip: alle Kosten werden komplett verrechnet.");
+
+Q(T3,"Nach welchem Prinzip werden Kosten den Produkten zugeordnet, die sie aufgrund des erzielbaren Marktpreises „tragen“ können?",
+ ["Tragfähigkeitsprinzip","Verursachungsprinzip","Durchschnittsprinzip","Wirtschaftlichkeitsprinzip"],
+ "Das Tragfähigkeitsprinzip ist für Entscheidungen kaum geeignet und findet in der Praxis wenig Anwendung.");
+
+Q(T3,"Was sind Normalkosten?",
+ ["Mittelwerte der Ist-Kosten mehrerer vergangener Perioden",
+  "Die tatsächlich angefallenen Kosten der Periode",
+  "Kosten, die aus technischen Berechnungen für die Zukunft abgeleitet werden",
+  "Kosten bei Normalbeschäftigung ohne Fixkosten"],
+ "Normalkosten glätten Schwankungen der Ist-Kosten, sind aber vergangenheitsbezogen.");
+
+Q(T3,"Welche Kostenrechnung ist als Instrument der Entscheidungsfindung am besten geeignet, weil sie keinen Vergangenheitsbezug hat?",
+ ["Plankostenrechnung","Istkostenrechnung","Normalkostenrechnung","Starre Vollkostenrechnung auf Basis der Vorperiode"],
+ "Plankosten werden für künftige Perioden aus Planmengen und Planpreisen ermittelt (Plan-Menge · Plan-Preis).");
+
+Q(T3,"Welcher Nachteil gilt für die Istkostenrechnung?",
+ ["Vergangenheitsbezogen, Kosten teilweise zufällig, aufwendige Erfassung",
+  "Sie ist nicht prüfbar",
+  "Sie ist nur für Banken zulässig",
+  "Sie berücksichtigt keine Löhne"],
+ "Ist-Kosten = Ist-Menge · Ist-Preis; Schwankungen und Zufälligkeiten schlagen direkt durch.");
+
+Q(T3,"Welche Aussage zu Einzel- bzw. Gemeinkosten und fixen bzw. variablen Kosten stimmt?",
+ ["Einzelkosten sind immer variabel; Fixkosten sind immer Gemeinkosten",
+  "Einzelkosten sind immer fix; Gemeinkosten sind immer variabel",
+  "Gemeinkosten sind immer fix",
+  "Variable Kosten sind immer Einzelkosten"],
+ "Einzelkosten sind immer variable Kosten (aber nicht umgekehrt). Fixkosten sind immer Gemeinkosten (aber Gemeinkosten sind nicht immer fix).");
+
+Q(T3,"Was sind „unechte Gemeinkosten“?",
+ ["Kosten, die direkt zurechenbar wären, aber aus Vereinfachungsgründen wie Gemeinkosten behandelt werden (z. B. Hilfs- und Betriebsstoffe)",
+  "Kosten, die nie zugerechnet werden können",
+  "Kalkulatorische Kosten ohne Aufwand",
+  "Fixkosten des Verwaltungsbereichs"],
+ "Direkt zurechenbar, aber zu unbedeutend für die Einzelerfassung: z. B. Schrauben, Klebstoff.");
+
+Q(T3,"Welche Bezugsobjekte kennt die traditionelle Kostenrechnung?",
+ ["Kostenstellen und Kostenträger","Kunden und Vertriebswege","Lieferanten und Prozesse","Nur Kostenarten"],
+ "Kunden, Vertriebswege, Gebiete, Lieferanten und Prozesse sind neuere Bezugsobjekte (z. B. Prozesskostenrechnung).");
+
+Q(T3,"Warum sind tägliche Kostenauswertungen meist wenig aussagekräftig?",
+ ["Weil Aufwands- und Kostenbuchungen (z. B. Gehälter, Abschreibungen) nicht auf Tagesbasis abgegrenzt sind",
+  "Weil es keine Software dafür gibt",
+  "Weil Kosten nur jährlich entstehen",
+  "Weil Kosten täglich schwanken müssen"],
+ "In der Praxis wird monatlich in standardisierten Berichten ausgewertet.");
+
+Q(T3,"In welchen Kontenklassen des Industriekontenrahmens (IKR) werden die Grundlagen für die Kostenartengliederung geführt?",
+ ["Klasse 6 (Aufwendungen) und Klasse 9 (Kosten- und Leistungsrechnung)","Klasse 0 und 1","Klasse 2 und 3","Klasse 7 und 8"],
+ "Der IKR hat den Vorteil, dass Konten der Klasse 9 für kostenrechnerische Zwecke genutzt werden können. Beim GKR ist es Klasse 4.");
+
+Q(T3,"Welche Nachteile hat die Kalkulation auf Vollkostenbasis?",
+ ["Willkürliche Verteilung der Fixkosten; Zuschläge gelten nur für einen bestimmten Beschäftigungsgrad",
+  "Sie ist nach HGB verboten",
+  "Sie berücksichtigt keine Einzelkosten",
+  "Sie liefert keine Selbstkosten"],
+ "Für kurzfristige preis- und absatzpolitische Entscheidungen ist die Vollkostenrechnung nicht geeignet.");
+
+C(T3,"Produkt A: 5.000 Stück, Preis 4,80 €, Vollkosten 5,20 € je Stück, variable Kosten 4,20 € je Stück. Wie hoch ist der Deckungsbeitrag je Stück?",
+ ["– 0,40 €","0,60 €","4,20 €","5,20 €"],1,
+ "DB je Stück = Preis – variable Stückkosten = 4,80 – 4,20 = 0,60 €. Auf Vollkostenbasis wirkt A mit – 0,40 € je Stück defizitär.","Skript 3.2");
+Q(T3,"Produkt A weist bei Vollkosten einen Verlust (– 2.000 €) aus, hat aber einen positiven Deckungsbeitrag (+ 3.000 €). Preiserhöhungen sind nicht möglich. Wie entscheiden Sie?",
+ ["A im Programm halten, da der positive Deckungsbeitrag zur Fixkostendeckung beiträgt",
+  "A sofort einstellen, da es einen Verlust ausweist",
+  "A einstellen und die Fixkosten sparen",
+  "A nur auslaufen lassen, wenn die Fixkosten sinken"],
+ "Ohne A fehlen 3.000 € Deckungsbeitrag. Die Fixkosten bleiben aber bestehen. Das Betriebsergebnis würde von 3.000 € auf 0 € sinken.","Skript 3.2");
+
+RF(T3,"Einzelkosten sind bezogen auf den Kostenträger variable Kosten.",true,
+ "Einzelkosten ändern sich mit der Menge der Kostenträger.","Übungsblatt Multiple Choice");
+RF(T3,"Einzelkosten werden den Kostenträgern direkt zugeordnet.",true,
+ "Das ist die Definition (z. B. Fertigungsmaterial, Fertigungslöhne).","Übungsblatt Multiple Choice");
+RF(T3,"Abschreibungen und Personalkosten der Mitarbeiter im Rechnungswesen sind Beispiele für Einzelkosten.",false,
+ "Das sind Gemeinkosten.","Übungsblatt Multiple Choice");
+RF(T3,"Einzelkosten können auch als Stückkosten bezeichnet werden.",false,
+ "Stückkosten sind Gesamtkosten je Stück und enthalten auch Gemeinkosten.","Übungsblatt Multiple Choice");
+RF(T3,"Gemeinkosten sind immer fixe Kosten.",false,
+ "Es gibt auch variable Gemeinkosten (z. B. Energie, Betriebsstoffe).","Übungsblatt Multiple Choice");
+RF(T3,"Gemeinkosten sind unabhängig von der Beschäftigung.",false,
+ "Das gilt nur für fixe Gemeinkosten.","Übungsblatt Multiple Choice");
+RF(T3,"Gemeinkosten fallen nur im Verwaltungsbereich an.",false,
+ "Gemeinkosten fallen in allen Bereichen an (Material, Fertigung, Verwaltung, Vertrieb).","Übungsblatt Multiple Choice");
+RF(T3,"Gemeinkosten werden in der Kostenstellenrechnung den Kostenstellen zugeordnet.",true,
+ "Die Verteilung erfolgt direkt oder über Schlüsselgrößen.","Übungsblatt Multiple Choice");
+RF(T3,"Die Kostenartenrechnung erfasst die Kosten nach den Funktionsbereichen eines Unternehmens.",false,
+ "Das wäre eine Gliederung nach Kostenstellen. Kostenarten gliedern nach verbrauchten Produktionsfaktoren.","Übungsblatt Multiple Choice");
+RF(T3,"Die Kostenartenrechnung gliedert die Kosten nach verbrauchten Produktionsfaktoren (Werkstoffe, Personalkosten, …).",true,
+ "Das hat sich in der Praxis durchgesetzt.","Übungsblatt Multiple Choice");
+RF(T3,"Die Kostenartenrechnung übernimmt alle Aufwendungen aus der GuV in die Kostenrechnung.",false,
+ "Neutrale Aufwendungen werden abgegrenzt.","Übungsblatt Multiple Choice");
+
+/* ===== T4: Kostenartenrechnung ===== */
+Q(T4,"Was ist die Aufgabe der Kostenartenrechnung?",
+ ["Erfassung und Gliederung aller in der Periode angefallenen Kosten",
+  "Verteilung der Gemeinkosten auf Kostenstellen",
+  "Kalkulation der Stückkosten",
+  "Ermittlung des Deckungsbeitrags je Produkt"],
+ "Sie ist Basis für Kostenstellen- und Kostenträgerrechnung sowie für Soll-Ist-, Zeit- und Betriebsvergleiche.");
+
+Q(T4,"Welche Gliederung der Kostenarten hat sich in der Praxis durchgesetzt?",
+ ["Nach Art der verbrauchten Produktionsfaktoren",
+  "Nach Kostenträgern",
+  "Nach Verantwortungsbereichen",
+  "Nach Kapitalgebern"],
+ "Werkstoff-, Personal-, Dienstleistungs-, Betriebsmittelkosten sowie Steuern, Gebühren und Beiträge.");
+
+Q(T4,"Welcher Grundsatz der Kostenartenrechnung verlangt eindeutige Kosteninhalte und verbietet Mischkostenarten wie „Sonstige Kosten“?",
+ ["Grundsatz der Reinheit","Grundsatz der Einheitlichkeit","Grundsatz der Vollständigkeit","Grundsatz der Wirtschaftlichkeit"],
+ "Reinheit: Einer Kostenart dürfen nur eindeutige Kosteninhalte zugeordnet werden.");
+
+Q(T4,"Welcher Grundsatz sorgt dafür, dass Kosten einheitlich und schnell zugerechnet werden (Vergleichbarkeit)?",
+ ["Grundsatz der Einheitlichkeit","Grundsatz der Reinheit","Grundsatz der Vollständigkeit","Grundsatz der Zurechenbarkeit"],
+ "Kontierungsvorschriften stellen die Einheitlichkeit sicher.");
+
+Q(T4,"Was besagt der Grundsatz der Wirtschaftlichkeit in der Kostenartenrechnung?",
+ ["Die Erfassung muss im wirtschaftlich vertretbaren Rahmen bleiben: je differenzierter, desto aufwendiger",
+  "Es sind nur die wirtschaftlichsten Kosten zu erfassen",
+  "Alle Kosten sind einheitlich zu erfassen",
+  "Nur Einzelkosten sind zu erfassen"],
+ "Detaillierung und Erfassungsaufwand sind abzuwägen.");
+
+Q(T4,"Welche Personalkosten sind typische Einzelkosten?",
+ ["Fertigungslöhne (Akkord- oder Zeitlohn direkt für die Produktion)",
+  "Hilfslöhne in produktionsunterstützenden Bereichen",
+  "Gehälter der Verwaltung",
+  "Freiwillige Sozialleistungen"],
+ "Hilfslöhne, Gehälter und Sozialkosten sind Gemeinkosten.");
+
+Q(T4,"Wie werden ungleichmäßig anfallende Personalkosten (z. B. Weihnachtsgeld, Urlaubsgeld) in der Kostenrechnung berücksichtigt?",
+ ["Über ein Abgrenzungskonto in gleichmäßigen Raten bzw. in Relation zur Lohn- und Gehaltssumme",
+  "Nur im Monat der Auszahlung",
+  "Gar nicht",
+  "Als neutraler Aufwand"],
+ "Dem Abgrenzungskonto wird die tatsächliche Zahlung belastet und der verrechnete Betrag gutgeschrieben.");
+
+Q(T4,"Wie berechnet sich der Materialverbrauch nach der Inventurmethode?",
+ ["Anfangsbestand + Zugänge – Endbestand (Inventurbestand)",
+  "Summe der Materialentnahmescheine",
+  "Produzierte Menge · Soll-Verbrauchsmenge",
+  "Endbestand – Anfangsbestand"],
+ "Nachteile: Kostenstelle/Kostenträger nicht ermittelbar, Lagerverluste nicht feststellbar, bei monatlicher Abrechnung wäre monatliche Inventur nötig.");
+
+Q(T4,"Welche Methode der Verbrauchsermittlung nutzt Materialentnahmescheine?",
+ ["Fortschreibemethode (Skontration)","Inventurmethode","Rückrechnung","Durchschnittsmethode"],
+ "Vorteil: Kostenstelle/Kostenträger sind vermerkt; Lagerverluste werden durch die jährliche Inventur sichtbar.");
+
+Q(T4,"Wie funktioniert die Rückrechnung beim Materialverbrauch und was ist ihr Nachteil?",
+ ["Verbrauch = produzierte Menge · Sollverbrauch je Stück (Stückliste); Lagerverluste sind nicht feststellbar",
+  "Verbrauch = Anfangsbestand + Zugang – Endbestand; zu aufwendig",
+  "Verbrauch = Summe der Entnahmescheine; zu ungenau",
+  "Verbrauch = Einkaufsmenge; nur für Handelswaren"],
+ "Die Rückrechnung ist einfach, erfasst aber nur den Soll-Verbrauch.");
+
+Q(T4,"Welche Bewertungsmethode für den Materialverbrauch hat sich in der Praxis durchgesetzt und warum?",
+ ["Festpreise: geringer Aufwand, konstante Kosten über längere Zeit",
+  "Tagespreise: sehr genau, aber unüblich",
+  "Durchschnittliche Anschaffungspreise: einfach und konstant",
+  "Lifo-Verfahren: weil es gesetzlich vorgeschrieben ist"],
+ "Istpreise (Durchschnitts-, Lifo-, Fifo-, Hifo-Verfahren) sind aufwendig. Festpreise bzw. Wiederbeschaffungskosten sind einfach und stabil.");
+
+Q(T4,"Welche Kosten zählen zu den Dienstleistungskosten?",
+ ["Mieten, Energie, Versicherungen, Provisionen, Beratung","Löhne und Gehälter","Roh- und Hilfsstoffe","Kalkulatorische Abschreibungen"],
+ "Wichtig ist die zeitliche Abgrenzung, z. B. bei vorausbezahlten Versicherungsbeiträgen.");
+
+Q(T4,"Welche Aufgabe haben kalkulatorische Abschreibungen?",
+ ["Ermittlung des verursachungsgerechten Werteverzehrs der Anlagen",
+  "Steuern sparen",
+  "Ermittlung des tatsächlichen Zahlungsmittelabflusses",
+  "Verteilung der Anschaffungsauszahlung auf die Jahre ohne Rücksicht auf Verbrauch"],
+ "Der Werteverzehr wird durch Gebrauch, Zeitverschleiß und wirtschaftliche Ursachen bestimmt.");
+
+Q(T4,"Auf welcher Wertbasis werden kalkulatorische Abschreibungen zur Substanzerhaltung (bei steigenden Preisen) gerechnet?",
+ ["Wiederbeschaffungskosten","Anschaffungskosten","Restbuchwert","Verkehrswert des Grundstücks"],
+ "Sie führen zu Anderskosten, weil sie von der bilanziellen Abschreibung abweichen.");
+
+Q(T4,"Welche Abschreibungsverfahren sind in der KLR grundsätzlich möglich und welches herrscht in der Praxis vor?",
+ ["Linear, degressiv, progressiv, Leistungsabschreibung; vorherrschend ist die lineare Abschreibung",
+  "Nur linear und degressiv; degressiv herrscht vor",
+  "Nur das steuerlich zulässige Verfahren",
+  "Nur die Leistungsabschreibung"],
+ "Linear ist einfach und verursachungsgerecht bei annähernd konstanter Beschäftigung.");
+
+Q(T4,"Warum werden kalkulatorische Zinsen auf Eigen- UND Fremdkapital angesetzt?",
+ ["Der Kostenansatz soll unabhängig von der Finanzierung sein; der Eigentümer könnte sein Kapital alternativ anlegen",
+  "Weil Eigenkapital Zinsaufwand in der GuV verursacht",
+  "Weil das Handelsrecht es verlangt",
+  "Weil Fremdkapital zinsfrei ist"],
+ "In der GuV steht nur der Zinsaufwand für Fremdkapital. Kalkulatorische Zinsen = betriebsnotwendiges Vermögen · Zinssatz.");
+
+Q(T4,"Auf welcher Grundlage werden kalkulatorische Zinsen berechnet?",
+ ["Betriebsnotwendiges Kapital bzw. Vermögen","Gesamtvermögen","Nur Eigenkapital","Nur Fremdkapital"],
+ "Betriebsnotwendiges Vermögen = betriebsnotwendiges Anlagevermögen + betriebsnotwendiges Umlaufvermögen.");
+
+Q(T4,"Welche Zinssätze kommen für kalkulatorische Zinsen in Betracht?",
+ ["Marktzins (z. B. Fremdkapitalzins) oder Opportunitätszins (alternative Kapitalanlage)",
+  "Nur der Basiszinssatz der EZB",
+  "Immer der Satz der Hausbank für Überziehungen",
+  "Zinssatz null"],
+ "Alternativ z. B. 10-jährige Staatsanleihe (risikolose Anlage) oder ein Opportunitätszins wie bei einer stillen Beteiligung.");
+
+Q(T4,"Wie verlaufen die kalkulatorischen Zinsen bei der Restwertverzinsung im Vergleich zur Durchschnittswertverzinsung?",
+ ["Restwertverzinsung: sinkende Zinsen; Durchschnittswertverzinsung: gleichbleibende Zinsen",
+  "Restwertverzinsung: gleichbleibend; Durchschnittswert: sinkend",
+  "Beide sinken",
+  "Beide steigen"],
+ "Restwert = um Abschreibung verminderter Wert. Durchschnittswert = halber Anschaffungs-/Wiederbeschaffungswert.");
+
+Q(T4,"Wie wird das durchschnittlich gebundene betriebsnotwendige Umlaufvermögen ermittelt?",
+ ["(Anfangsbestand + Endbestand) / 2","Anfangsbestand – Endbestand","Endbestand / 2","Anfangsbestand · Zinssatz"],
+ "Beispiel: Vorräte AB 100.000, EB 200.000 → 150.000.");
+
+Q(T4,"Welches Vermögen ist bei der Ermittlung des betriebsnotwendigen Vermögens NICHT einzubeziehen?",
+ ["Wertpapiere, die reine Finanzanlagen sind","Maschinen der Fertigung","Betrieblich genutzte Gebäude","Vorräte"],
+ "Nicht betriebsnotwendig sind reine Finanzanlagen oder vermietete bzw. nicht genutzte Vermögensteile.");
+
+Q(T4,"Welche Wagnisse werden als kalkulatorische Wagnisse angesetzt?",
+ ["Einzelwagnisse im Zusammenhang mit der Leistungserstellung (z. B. Bestände-, Anlagen-, Ausschuss-, Gewährleistungswagnis), sofern keine Versicherung besteht",
+  "Das allgemeine unternehmerische Risiko, z. B. sinkende Nachfrage",
+  "Konjunkturelle Risiken des Gesamtunternehmens",
+  "Alle Risiken, auch versicherte"],
+ "Das allgemeine Unternehmerrisiko ist aus dem Gewinn zu decken. Versicherungsprämien sind bereits Aufwand und Kosten.");
+
+Q(T4,"Wann wird ein kalkulatorischer Unternehmerlohn angesetzt?",
+ ["Bei Einzelunternehmen und Personengesellschaften für die Mitarbeit der Inhaber",
+  "Bei Kapitalgesellschaften für Gesellschafter",
+  "Nur wenn das Unternehmen Verluste macht",
+  "Nie, weil er durch den Gewinn abgegolten ist"],
+ "Bei Personenunternehmen wird kein Gehalt als Aufwand gebucht (durch den Gewinn abgegolten). Bemessung nach Opportunitätsprinzip: Gehalt eines vergleichbaren Geschäftsführers.");
+
+Q(T4,"Wann wird eine kalkulatorische Miete angesetzt?",
+ ["Wenn Privaträume des Unternehmers betrieblich genutzt werden",
+  "Wenn Räume an Dritte vermietet werden",
+  "Wenn das Unternehmen Räume angemietet hat",
+  "Wenn die Miete gestiegen ist"],
+ "Analog zum Unternehmerlohn: Zusatzkosten, da die Miete nicht als Aufwand gebucht wird.");
+
+Q(T4,"Wozu dient die Abgrenzungsrechnung?",
+ ["Überleitung der Aufwendungen und Erträge der Finanzbuchführung in Kosten und Leistungen",
+  "Verteilung der Gemeinkosten auf Kostenstellen",
+  "Berechnung des Deckungsbeitrags",
+  "Ermittlung des Break-even-Points"],
+ "Rechnungskreis I (Finanzbuchhaltung) wird über Abgrenzungen (neutrales Ergebnis, Verrechnungskorrekturen) in Rechnungskreis II (KLR) übergeleitet.");
+
+Q(T4,"Wie wird der Verlust aus dem Abgang einer betrieblich nicht mehr genutzten Maschine abgegrenzt?",
+ ["Als neutraler Aufwand (betriebsfremd): keine Kosten","Als Kosten der Fertigung","Als kalkulatorische Abschreibung","Als Zusatzkosten"],
+ "Er hat keinen Bezug zum Betriebszweck.");
+
+Q(T4,"Wie werden Abschreibungen auf Wertpapiere in der Abgrenzungsrechnung behandelt?",
+ ["Als betriebsfremder (neutraler) Aufwand, keine Kosten","Als Kosten","Als kalkulatorische Zinsen","Als Anderskosten"],
+ "Wertpapiere sind reine Finanzanlagen und keine betriebsnotwendigen Werte.");
+
+Q(T4,"Wie werden Zinsaufwendungen für Fremdkapital in der Abgrenzung behandelt, wenn kalkulatorische Zinsen angesetzt werden?",
+ ["Der Zinsaufwand wird abgegrenzt und durch kalkulatorische Zinsen ersetzt (Verrechnungskorrektur)",
+  "Er wird zusätzlich zu den kalkulatorischen Zinsen als Kosten angesetzt",
+  "Er wird nur als außerordentlicher Aufwand erfasst",
+  "Er wird als Leistung verbucht"],
+ "Sonst würden Fremdkapitalzinsen doppelt angesetzt.");
+
+RF(T4,"Der Materialverbrauch kann nach der Inventurmethode ermittelt werden: Anfangsbestand + Zugänge – Inventurbestand.",true,
+ "So lautet die Formel.","Übungsblatt Multiple Choice");
+RF(T4,"Der Materialverbrauch ergibt sich aus Endbestand – Anfangsbestand (Durchschnittsmethode).",false,
+ "Diese Formel ist falsch.","Übungsblatt Multiple Choice");
+RF(T4,"Der Materialverbrauch kann aus der Summe der Materialentnahmescheine ermittelt werden (Fortschreibemethode).",true,
+ "Das ist die Fortschreibemethode.","Übungsblatt Multiple Choice");
+RF(T4,"Der Materialverbrauch kann über hergestellte Menge · Sollverbrauchsmenge ermittelt werden (Rückrechnung).",true,
+ "Das ist die Rückrechnung.","Übungsblatt Multiple Choice");
+RF(T4,"Kalkulatorische Kosten beeinflussen sowohl die Kosten- und Leistungsrechnung als auch die GuV.",false,
+ "Sie beeinflussen nur die KLR.","Übungsblatt Multiple Choice");
+RF(T4,"Kalkulatorische Abschreibungen können von der finanzbuchhalterischen Abschreibung abweichen (Anderskosten).",true,
+ "Z. B. wegen anderer Nutzungsdauer oder Wiederbeschaffungswert.","Übungsblatt Multiple Choice");
+RF(T4,"Kalkulatorische Abschreibungen sind immer höher als die finanzbuchhalterischen Abschreibungen.",false,
+ "Sie können auch niedriger sein (z. B. längere Nutzungsdauer).","Übungsblatt Multiple Choice");
+RF(T4,"Kalkulatorische Abschreibungen können auf einen höheren Wiederbeschaffungswert einer Anlage berechnet werden.",true,
+ "Zur Substanzerhaltung.","Übungsblatt Multiple Choice");
+RF(T4,"Kalkulatorische Abschreibungen sollen den tatsächlichen Werteverzehr einer Anlage widerspiegeln.",true,
+ "Das ist ihr Zweck.","Übungsblatt Multiple Choice");
+RF(T4,"Kalkulatorische Zinsen werden auf das betriebsnotwendige Kapital berechnet.",true,
+ "Nicht auf das Gesamtvermögen.","Übungsblatt Multiple Choice");
+RF(T4,"Kalkulatorische Zinsen werden nur auf das Fremdkapital berechnet.",false,
+ "Auf das betriebsnotwendige Kapital (Eigen- und Fremdkapital).","Übungsblatt Multiple Choice");
+RF(T4,"Kalkulatorische Kosten werden angesetzt, um die Substanz des Unternehmens in der Zukunft zu sichern.",true,
+ "Besonders kalkulatorische Abschreibungen auf Wiederbeschaffungswerte.","Übungsblatt Multiple Choice");
+RF(T4,"Bei einer bestehenden Versicherung werden keine kalkulatorischen Wagniskosten angesetzt.",true,
+ "Die Versicherungsprämie ist bereits Aufwand und Kosten.","Übungsblatt Multiple Choice");
+RF(T4,"Allgemeine unternehmerische Risiken werden in den kalkulatorischen Wagniskosten berücksichtigt.",false,
+ "Sie sind aus dem Gewinn zu decken.","Übungsblatt Multiple Choice");
+RF(T4,"Auf einen kalkulatorischen Unternehmerlohn kann verzichtet werden, wenn genügend Gewinn erwirtschaftet wird.",false,
+ "Der Unternehmerlohn ist ein Kostenbestandteil und kein Gewinnbestandteil.","Übungsblatt Multiple Choice");
+
+C(T4,"Anfangsbestand Material 50.000 €, Zugänge 30.000 €, Endbestand laut Inventur 20.000 €. Wie hoch ist der Verbrauch nach der Inventurmethode?",
+ ["40.000 €","60.000 €","80.000 €","100.000 €"],1,
+ "Verbrauch = AB + Zugang – EB = 50.000 + 30.000 – 20.000 = 60.000 €.");
+C(T4,"Anlage: Anschaffungskosten 100.000 €, Wiederbeschaffungskosten 120.000 €, Nutzungsdauer 10 Jahre, linear. Wie hoch sind die kalkulatorische Abschreibung und die Anderskosten je Jahr?",
+ ["Kalk. Abschreibung 10.000 €, Anderskosten 0 €","Kalk. Abschreibung 12.000 €, Anderskosten 2.000 €","Kalk. Abschreibung 12.000 €, Anderskosten 12.000 €","Kalk. Abschreibung 2.000 €, Anderskosten 2.000 €"],1,
+ "Kalk. Abschreibung = 120.000 / 10 = 12.000 €. Bilanziell 10.000 €. Differenz 2.000 € = Anderskosten.");
+C(T4,"Eine Anlage kostet 350.000 € und wird linear über 10 Jahre abgeschrieben. Wie hoch ist die jährliche Abschreibung?",
+ ["25.000 €","35.000 €","50.000 €","70.000 €"],1,
+ "350.000 / 10 = 35.000 € je Jahr.","Übung Teil 4, Kalk. Abschreibungen");
+C(T4,"Die Anlage (350.000 €, ursprünglich 10 Jahre) wird nach 4 Jahren nur noch 7 Jahre genutzt. Fall b): Der Abschreibungsbetrag wird für die gesamte (neue) Nutzungsdauer neu berechnet und für die Restlaufzeit angesetzt. Wie hoch ist er?",
+ ["35.000 €","50.000 €","60.000 €","70.000 €"],1,
+ "350.000 / 7 = 50.000 € je Jahr in den Jahren 5 bis 7. Nur dieser Weg bildet die Perioden 5 bis 7 richtig ab. Merke: Ein Fehler der Vergangenheit darf nicht durch einen weiteren Fehler für die Zukunft kompensiert werden.","Übung Teil 4, Kalk. Abschreibungen");
+C(T4,"Anlage 350.000 €, nach 4 Jahren linearer Abschreibung (35.000 €/Jahr) beträgt der Restbuchwert 210.000 €. Fall c): Der Restbuchwert wird auf die verbleibenden 3 Jahre verteilt. Wie hoch ist die Abschreibung?",
+ ["35.000 €","50.000 €","70.000 €","105.000 €"],2,
+ "210.000 / 3 = 70.000 €. Das belastet die Jahre 5 bis 7 überhöht und kompensiert den Fehler der Vergangenheit durch einen neuen Fehler.","Übung Teil 4, Kalk. Abschreibungen");
+Q(T4,"Anlage 350.000 €, geplante Nutzungsdauer 10 Jahre; nach 4 Jahren stellt sich eine Gesamtnutzungsdauer von 7 Jahren heraus. Welche Fortführung der kalkulatorischen Abschreibung ist laut Übung richtig?",
+ ["Neuer Betrag = Anschaffungswert / neue Nutzungsdauer (50.000 €) für die Restlaufzeit",
+  "Weiter 35.000 € je Jahr bis zum Ende der 7 Jahre",
+  "Restbuchwert 210.000 € gleichmäßig auf die verbleibenden 3 Jahre verteilen (70.000 €)",
+  "Gar nicht mehr abschreiben"],
+ "Fall b) bildet die Perioden 5 bis 7 richtig ab. Fall a) lässt 105.000 € nicht abgeschrieben und Fall c) belastet die Restjahre zu stark.","Übung Teil 4, Kalk. Abschreibungen");
+C(T4,"Abgrenzungsrechnung (in T€): Die Fibu enthält 20 T€ Steuern, davon 1 T€ Grundsteuer für vermietete Büroräume und 10 T€ Gewerbesteuernachzahlung. Wie hoch sind die Steuern als Kosten?",
+ ["9 T€","10 T€","19 T€","20 T€"],0,
+ "20 – 1 (betriebsfremd) – 10 (periodenfremd) = 9 T€ Kosten.","Übung Teil 4, Abgrenzung I");
+C(T4,"Abgrenzungsrechnung I (T€): Umsatz 350; Kosten: Material 140, Löhne 60, Steuern 9, kalk. Abschreibungen 60, kalk. Zinsen 15, kalk. Wagnisse 12, kalk. Unternehmerlohn 30. Wie hoch ist der interne Erfolg?",
+ ["24 T€","44 T€","89 T€","350 T€"],0,
+ "Kosten = 140 + 60 + 9 + 60 + 15 + 12 + 30 = 326 T€. Interner Erfolg = Leistung 350 – Kosten 326 = 24 T€. (Das Gesamtergebnis der Fibu beträgt 89 T€.)","Übung Teil 4, Abgrenzung I");
+C(T4,"Sonnenschein OHG: Aufwand 461.000 €. Abgrenzungen: Neutrale Aufwendungen 9.000 € (Vermietung 5.000 + 1.000 Grundsteuer, Wertpapier 3.000), außerordentliche 17.000 € (Anlagenabgang 5.000, Abfindungen 12.000), Zinsaufwand 10.000 € wird ersetzt, Abschreibung AV 85.000 € wird ersetzt. Kalkulatorisch: Abschreibung 60.000 €, Zinsen 40.000 €. Wie hoch sind die Kosten?",
+ ["391.000 €","445.000 €","461.000 €","535.000 €"],1,
+ "Material 120.000 + Löhne 220.000 + Steuern 5.000 + kalk. Abschreibung 60.000 + kalk. Zinsen 40.000 = 445.000 €. Es fehlen noch kalk. Unternehmerlohn und kalk. Wagnisse.","Übung Teil 4, Abgrenzung II");
+C(T4,"Sonnenschein OHG (Klausur 2023, alle Beträge verdoppelt): Wie hoch sind die Kosten laut Abgrenzung?",
+ ["445.000 €","890.000 €","922.000 €","1.070.000 €"],1,
+ "Die Zahlen der Klausur sind das Doppelte der Übungsaufgabe: Kosten = 2 · 445.000 = 890.000 €.","Klausur 2023, Aufgabe 3");
+Q(T4,"Welche kalkulatorischen Kosten fehlen in der Kostenrechnung der Sonnenschein OHG (OHG = Personengesellschaft)?",
+ ["Kalkulatorischer Unternehmerlohn und kalkulatorische Wagnisse",
+  "Kalkulatorische Dividenden",
+  "Kalkulatorische Steuern",
+  "Kalkulatorische Rückstellungen für Spenden"],
+ "Gesellschafter arbeiten mit (Unternehmerlohn). Einzelwagnisse sind zu berücksichtigen, soweit nicht versichert.","Übung Teil 4, Abgrenzung II");
+C(T4,"Betriebsnotwendiges Vermögen (Durchschnittswertmethode): Grundstücke 300.000 €, Gebäude (WBK 1.000.000 €), Maschinen (WBK 1.200.000 €), Vorräte (AB 100.000 €, EB 200.000 €), Bank (AB 10.000 €, EB 50.000 €); Wertpapiere nicht betriebsnotwendig. Wie hoch ist es?",
+ ["1.380.000 €","1.580.000 €","1.780.000 €","2.330.000 €"],1,
+ "Grundstücke 300.000 (keine Abnutzung) + Gebäude 500.000 + Maschinen 600.000 + Vorräte 150.000 + Bank 30.000 = 1.580.000 €. Nach der Restwertmethode: 1.780.000 €.","Übung Teil 4, Kalk. Zinsen");
+C(T4,"Gebäude: Wiederbeschaffungskosten 1.000.000 €, Nutzungsdauer 50 Jahre, davon 20 Jahre abgeschrieben. Wie hoch ist der Ansatz nach der Restwertmethode?",
+ ["400.000 €","500.000 €","600.000 €","800.000 €"],2,
+ "Restwert = 1.000.000 / 50 · 30 = 600.000 €. Nach der Durchschnittsmethode wären es 500.000 €.","Übung Teil 4, Kalk. Zinsen");
+C(T4,"Betriebsnotwendiges Vermögen 1.580.000 €, Zinssatz 5 %. Wie hoch sind die kalkulatorischen Zinsen pro Jahr?",
+ ["15.800 €","60.000 €","79.000 €","158.000 €"],2,
+ "1.580.000 · 5 % = 79.000 €.");
+C(T4,"Eine Anlage wird zu 12.000 € erworben. Wie hoch ist der Durchschnittswert für die kalkulatorische Verzinsung?",
+ ["3.000 €","6.000 €","10.000 €","12.000 €"],1,
+ "Durchschnittswert = Anschaffungswert / 2 = 6.000 €. Die Zinsen bleiben damit über die Nutzungsdauer gleich hoch.","Skript 4.2.5");
+
+/* ===== T5: Kostenstellenrechnung & BAB ===== */
+Q(T5,"Welche Aufgabe hat die Kostenstellenrechnung?",
+ ["Verursachungsgerechte Zuordnung der Gemeinkosten auf Kostenstellen, Kostenkontrolle und Bildung von Kalkulationssätzen",
+  "Erfassung aller Kosten nach Kostenarten",
+  "Ermittlung des Betriebsergebnisses je Produkt",
+  "Berechnung der Preisuntergrenze"],
+ "Die Kostenstellenrechnung ist das Bindeglied zwischen Kostenarten- und Kostenträgerrechnung und liefert Basisdaten für die Kalkulation sowie Plankosten für Betriebsbereiche.");
+
+Q(T5,"Was ist eine Kostenstelle?",
+ ["Ein Ort der Kostenentstehung: ein Teilbereich des Unternehmens, der kostenrechnerisch selbständig abgerechnet wird",
+  "Ein Produkt, dem Kosten zugerechnet werden",
+  "Eine Kostenart mit einheitlichem Inhalt",
+  "Ein Konto der GuV"],
+ "Kostenstellen sind Kontierungsobjekte, z. B. Materialstelle, Vorfertigung, Verwaltung.");
+
+Q(T5,"Welches der folgenden Kriterien ist KEIN Kriterium für die Bildung von Kostenstellen?",
+ ["Möglichkeit, Fixkosten zu reduzieren",
+  "Selbständiger Verantwortungsbereich",
+  "Exakte Verbuchung der Kostenbelege",
+  "Sinnvoll bestimmbare Bezugsgrößen"],
+ "Kriterien: Verantwortungsbereich, exakte Verbuchung, sinnvolle Bezugsgrößen, Wirtschaftlichkeit und Übersichtlichkeit.");
+
+Q(T5,"Wozu dienen Bezugsgrößen in der Kostenstellenrechnung?",
+ ["Als Maßgrößen der Kostenverursachung: für die Kostenzuordnung ohne Beleg und für die Weiterverrechnung auf Kostenstellen/-träger",
+  "Zur Berechnung von Skonto",
+  "Zur Ermittlung des Gewinns",
+  "Zur Bestimmung der Steuern"],
+ "Beispiele: qm für Mieten, kWh für Strom, Stunden für Reparaturleistungen.");
+
+Q(T5,"Ein Unternehmen arbeitet in zwei Gebäuden: A (24.000 € Kosten, 1.600 qm) und B (48.000 € Kosten, 2.000 qm). Welche Folge hat die Zusammenfassung zu einer Gebäudekostenstelle?",
+ ["Kostenstellen im „billigeren“ Gebäude A werden zu hoch, im „teureren“ Gebäude B zu niedrig belastet",
+  "Es ergeben sich keine Unterschiede",
+  "Gebäude B wird zu hoch belastet",
+  "Alle Kostenstellen werden zu niedrig belastet"],
+ "Einheitlicher Satz 20 €/qm statt 15 €/qm (A) und 24 €/qm (B): Die Zusammenfassung führt zu Ungenauigkeiten.","Skript 5.2");
+
+Q(T5,"Was kennzeichnet Hauptkostenstellen (Endkostenstellen)?",
+ ["Direkter Bezug zur Leistungserstellung; die Kosten werden über Kalkulationssätze direkt auf Kostenträger verrechnet",
+  "Kein Bezug zur Leistungserstellung; Kosten werden auf andere Kostenstellen umgelegt",
+  "Sie erbringen nur interne Dienstleistungen",
+  "Sie enthalten nur Fixkosten"],
+ "Beispiele: Material, Fertigung, Verwaltung, Vertrieb.");
+
+Q(T5,"Was kennzeichnet Hilfskostenstellen (Vorkostenstellen)?",
+ ["Kein direkter Bezug zur Leistungserstellung; ihre Kosten werden im Rahmen der innerbetrieblichen Leistungsverrechnung auf andere Stellen verrechnet",
+  "Ihre Kosten werden direkt auf Kostenträger verrechnet",
+  "Sie dienen nur der Kostenkontrolle",
+  "Sie haben keine Gemeinkosten"],
+ "Beispiele: Heizkraftwerk, Gebäudeverwaltung, Fuhrpark, IT-Service, Reparaturstelle.");
+
+Q(T5,"Welche Kostenstelle ist typischerweise eine Hilfskostenstelle?",
+ ["IT-Service / Fuhrpark / Gebäudeverwaltung","Vorfertigung","Endfertigung","Vertrieb"],
+ "Hauptkostenstellen haben direkten Bezug zur Leistungserstellung bzw. zum Absatz.");
+
+Q(T5,"Was sind Kostenstelleneinzelkosten?",
+ ["Gemeinkosten, die aufgrund des Belegs direkt einer Kostenstelle zugeordnet werden können (z. B. Gehälter, Reparaturen)",
+  "Einzelkosten eines Kostenträgers",
+  "Variable Kosten einer Kostenstelle",
+  "Kalkulatorische Kosten"],
+ "Direkte Verteilung. Alternativ erfolgt die indirekte Verteilung über Schlüsselgrößen.");
+
+Q(T5,"Was sind Kostenstellengemeinkosten?",
+ ["Gemeinkosten, die nicht direkt zugeordnet werden können und über Schlüsselgrößen auf mehrere Kostenstellen verteilt werden",
+  "Kosten, die nur in einer Kostenstelle anfallen",
+  "Einzelkosten der Kostenträger",
+  "Sondereinzelkosten"],
+ "Z. B. Miete nach qm, Strom nach kWh, Versicherungen nach Schätzung.");
+
+Q(T5,"Welche Zuordnung von Kostenart und Schlüsselgröße ist sinnvoll?",
+ ["Kalkulatorische Zinsen – betriebsnotwendiges Vermögen",
+  "Miete – Telefoneinheiten",
+  "Portokosten – Quadratmeter",
+  "Telefongebühren – Löhne und Gehälter"],
+ "Wertmäßige Schlüssel (z. B. Vermögen, Löhne) und mengenmäßige Schlüssel (qm, Zeit, Stück, Gewicht, Einheiten) sollen die Verursachung abbilden.");
+
+Q(T5,"Welche Aufgaben erfüllt der Betriebsabrechnungsbogen (BAB)?",
+ ["Verteilung der primären Gemeinkosten, innerbetriebliche Leistungsverrechnung, Bildung von Zuschlagssätzen und Kostenkontrolle",
+  "Erfassung der Einzelkosten je Produkt",
+  "Berechnung des Break-even-Points",
+  "Abgrenzung neutraler Aufwendungen"],
+ "Der BAB ist die tabellarische Form der Kostenstellenrechnung: Kostenarten in Zeilen, Kostenstellen in Spalten.");
+
+Q(T5,"Welche Reihenfolge der Schritte im BAB ist richtig?",
+ ["Primäre Gemeinkosten verteilen → innerbetriebliche Leistungsverrechnung → Gemeinkosten der Hauptkostenstellen → Zuschlagssätze",
+  "Zuschlagssätze → innerbetriebliche Leistungsverrechnung → primäre Gemeinkosten",
+  "Innerbetriebliche Leistungsverrechnung → primäre Gemeinkosten → Zuschlagssätze",
+  "Einzelkosten → Gewinn → Steuern"],
+ "Nach der ibL sind die Gemeinkosten der Hilfskostenstellen gleich null.");
+
+Q(T5,"Was versteht man unter primären Gemeinkosten im BAB?",
+ ["Die aus der Kostenartenrechnung stammenden Gemeinkosten, die direkt oder über Schlüssel auf die Kostenstellen verteilt werden",
+  "Die Umlagen der Hilfskostenstellen",
+  "Die Einzelkosten",
+  "Die kalkulatorischen Zinsen allein"],
+ "Primäre Gemeinkosten = Summe aller Beträge ohne Einzelkosten, bevor die ibL erfolgt.");
+
+Q(T5,"Was versteht man unter sekundären Gemeinkosten?",
+ ["Kosten, die durch die innerbetriebliche Leistungsverrechnung von Hilfskostenstellen auf andere Stellen umgelegt werden",
+  "Kosten der Verwaltung",
+  "Kalkulatorische Wagnisse",
+  "Kosten, die nach der Periode anfallen"],
+ "Sekundär = Umlagen aus der ibL.");
+
+Q(T5,"Warum ist die innerbetriebliche Leistungsverrechnung (ibL) erforderlich?",
+ ["Sonst wären Kalkulationssätze zu niedrig und eine Kostenkontrolle nicht möglich, weil Hilfskostenstellen Leistungen an andere Stellen erbringen",
+  "Sie ist handelsrechtlich vorgeschrieben",
+  "Um neutrale Aufwendungen abzugrenzen",
+  "Um Einzelkosten zu verteilen"],
+ "Die Kosten der Hilfskostenstellen gehen nicht direkt in die Kalkulation ein, sondern werden gemäß Inanspruchnahme verteilt.");
+
+Q(T5,"Welche Verfahren der innerbetrieblichen Leistungsverrechnung gibt es (Vorlesung)?",
+ ["Gleichungsverfahren (Simultanverfahren) und Stufenleiterverfahren",
+  "Divisions- und Zuschlagskalkulation",
+  "Restwert- und Verteilungsmethode",
+  "Inventur- und Fortschreibemethode"],
+ "Das Durchschnitts- oder Mittelwertverfahren gehört nicht dazu.");
+
+Q(T5,"Was kennzeichnet das Gleichungsverfahren (Simultanverfahren)?",
+ ["Exakte Lösung mit einem linearen Gleichungssystem, das auch gegenseitige Leistungen der Hilfskostenstellen berücksichtigt",
+  "Hilfskostenstellen geben Leistungen nur in eine Richtung ab",
+  "Es berücksichtigt keine Leistungen zwischen Hilfskostenstellen",
+  "Es verrechnet nach Durchschnittswerten"],
+ "Das Gleichungsverfahren ist in EDV-Systemen heute Standard.");
+
+Q(T5,"Was kennzeichnet das Stufenleiterverfahren (Treppenverfahren)?",
+ ["Die Hilfskostenstellen werden in eine Reihenfolge gebracht und geben Leistungen nur an nachfolgende Stellen ab; Leistungen an bereits abgerechnete Stellen bleiben unberücksichtigt",
+  "Es löst ein lineares Gleichungssystem mit allen Leistungsbeziehungen",
+  "Es verteilt Kosten gleichmäßig auf alle Stellen",
+  "Es rechnet nur mit Einzelkosten"],
+ "Vorteil: einfach. Nachteil: ungenau, da gegenseitige Leistungen nicht berücksichtigt werden.");
+
+Q(T5,"Welcher Nachteil des Stufenleiterverfahrens wird durch das Gleichungsverfahren vermieden?",
+ ["Gegenseitige Leistungen der Hilfskostenstellen werden vernachlässigt","Es ist zu genau","Es braucht keine Verrechnungspreise","Es berücksichtigt keine Hauptkostenstellen"],
+ "Das Gleichungsverfahren erfasst den wechselseitigen Leistungsaustausch vollständig.","Klausur 2019, Aufgabe 2");
+
+Q(T5,"Welche Bezugsgröße (Zuschlagsbasis) wird üblicherweise für die Materialgemeinkosten verwendet?",
+ ["Materialeinzelkosten","Fertigungseinzelkosten","Herstellkosten","Selbstkosten"],
+ "Materialbereich: MEK. Fertigungsbereich: FEK. Verwaltung und Vertrieb: Herstellkosten.");
+
+Q(T5,"Warum wird im Verwaltungs- und Vertriebsbereich die Bezugsgröße Herstellkosten verwendet?",
+ ["Weil dort kaum Einzelkosten anfallen","Weil Herstellkosten fix sind","Weil das gesetzlich vorgeschrieben ist","Weil Herstellkosten am niedrigsten sind"],
+ "HK = MEK + FEK + MGK + FGK (+ SEF).");
+
+Q(T5,"Wie berechnet sich ein Gemeinkostenzuschlagssatz?",
+ ["Gemeinkosten / Bezugsgröße · 100","Bezugsgröße / Gemeinkosten · 100","Gemeinkosten · Bezugsgröße","Einzelkosten / Gemeinkosten"],
+ "Beispiel: Gemeinkosten 20.000 €, Fertigungslöhne 12.500 € → 160 %.");
+
+Q(T5,"Warum wird in der Kalkulation häufig mit Normal- oder Plankostenzuschlägen gerechnet?",
+ ["Um Schwankungen in der Kostenträgerrechnung zu vermeiden; sie werden i. d. R. am Jahresbeginn festgelegt",
+  "Weil Ist-Kosten verboten sind",
+  "Weil sie immer niedriger sind",
+  "Weil sie die Fixkosten eliminieren"],
+ "Am Periodenende werden Normal- und Ist-Zuschläge verglichen. Die Differenz ist die Über- bzw. Unterdeckung.");
+
+Q(T5,"Wann liegt eine Unterdeckung vor?",
+ ["Wenn die verrechneten Normalgemeinkosten kleiner sind als die tatsächlichen Ist-Gemeinkosten",
+  "Wenn die verrechneten Normalgemeinkosten größer sind als die Ist-Gemeinkosten",
+  "Wenn die Einzelkosten kleiner als die Gemeinkosten sind",
+  "Wenn der Ist-Zuschlag gleich dem Normalzuschlag ist"],
+ "Über-/Unterdeckung = verrechnete Normalgemeinkosten – Ist-Gemeinkosten. Negativ = Unterdeckung.");
+
+Q(T5,"In der Normalkostenrechnung gilt für die Selbstkostenermittlung …",
+ ["Einzelkosten zu Ist-Werten, Gemeinkosten über Normalzuschläge","Alle Kosten zu Plan-Werten","Einzelkosten zu Plan-Werten, Gemeinkosten zu Ist-Werten","Alle Kosten zu Ist-Werten"],
+ "Die Abweichung zu den Ist-Gemeinkosten ist die Über- bzw. Unterdeckung.");
+
+Q(T5,"Welche Vor- und Nachteile hat das Stufenleiterverfahren?",
+ ["Vorteil: einfach und übersichtlich; Nachteil: wechselseitige Leistungsbeziehungen bleiben unberücksichtigt",
+  "Vorteil: exakt; Nachteil: aufwendig",
+  "Vorteil: berücksichtigt alle Beziehungen; Nachteil: nicht EDV-fähig",
+  "Es hat keine Nachteile"],
+ "Das Gleichungsverfahren löst das Problem, ist aber mathematisch aufwendiger (heute per EDV kein Problem).","Klausur 2019, Aufgabe 2");
+
+RF(T5,"Die Bildung von Kostenstellen orientiert sich an Verantwortungsbereichen.",true,
+ "Verantwortungsbereich ist ein zentrales Kriterium.","Übungsblatt Multiple Choice");
+RF(T5,"Die Bildung von Kostenstellen orientiert sich an räumlichen Gegebenheiten.",true,
+ "Auch räumliche Abgrenzungen können Kostenstellen sinnvoll machen.","Übungsblatt Multiple Choice");
+RF(T5,"Die Bildung von Kostenstellen orientiert sich an der Organisation des Unternehmens.",true,
+ "Organisationsstruktur und Verantwortlichkeiten sind Ausgangspunkt.","Übungsblatt Multiple Choice");
+RF(T5,"Die Bildung von Kostenstellen orientiert sich an der Bestimmbarkeit sinnvoller Bezugsgrößen zur Weiterverrechnung.",true,
+ "Ohne sinnvolle Bezugsgröße ist keine verursachungsgerechte Weiterverrechnung möglich.","Übungsblatt Multiple Choice");
+RF(T5,"Die Bildung von Kostenstellen orientiert sich an der Möglichkeit, Fixkosten zu reduzieren.",false,
+ "Das ist kein Kriterium der Kostenstellenbildung.","Übungsblatt Multiple Choice");
+RF(T5,"Nach der Art der Abrechnung werden Kostenstellen in Haupt- und Hilfskostenstellen unterschieden.",true,
+ "Haupt- (End-) und Hilfs- (Vor-) Kostenstellen.","Übungsblatt Multiple Choice");
+RF(T5,"Hilfskostenstellen haben einen direkten Bezug zur Leistungserstellung.",false,
+ "Das gilt für Hauptkostenstellen.","Übungsblatt Multiple Choice");
+RF(T5,"Hilfskostenstellen werden auf Hauptkostenstellen verrechnet.",true,
+ "Über die innerbetriebliche Leistungsverrechnung (ggf. auch auf andere Hilfsstellen).","Übungsblatt Multiple Choice");
+RF(T5,"Auf den Kostenstellen werden nur Einzelkosten erfasst.",false,
+ "Auf Kostenstellen werden Gemeinkosten erfasst und verteilt.","Übungsblatt Multiple Choice");
+RF(T5,"Die innerbetriebliche Leistungsverrechnung kann durch das Gleichungsverfahren erfolgen.",true,
+ "Das Gleichungsverfahren (Simultanverfahren) ist ein anerkanntes Verfahren.","Übungsblatt Multiple Choice");
+RF(T5,"Die innerbetriebliche Leistungsverrechnung kann durch das Stufenleiterverfahren erfolgen.",true,
+ "Das Stufenleiterverfahren (Treppenverfahren) ist ein anerkanntes Verfahren.","Übungsblatt Multiple Choice");
+RF(T5,"Die innerbetriebliche Leistungsverrechnung erfolgt durch das Durchschnittsverfahren oder das Mittelwertverfahren.",false,
+ "Solche Verfahren gibt es in der Vorlesung nicht.","Übungsblatt Multiple Choice");
+RF(T5,"Die Kostenkontrolle der Abteilungen bzw. Verantwortungsbereiche ist Aufgabe der Kostenträgerrechnung.",false,
+ "Das ist Aufgabe der Kostenstellenrechnung.","Übungsblatt Multiple Choice");
+RF(T5,"Die Ermittlung der Zuschlagssätze für die Kalkulation erfolgt in der Kostenträgerrechnung.",false,
+ "Zuschlagssätze werden im BAB (Kostenstellenrechnung) ermittelt.","Übungsblatt Multiple Choice");
+
+C(T5,"Eine Kostenstelle verursacht 72.000 € bei einer Bezugsgröße von 3.600 qm. Wie hoch ist der Kostensatz je qm?",
+ ["10 €","15 €","20 €","24 €"],2,
+ "72.000 / 3.600 = 20 €/qm.","Skript 5.2");
+C(T5,"Gleichungsverfahren: Stromstelle primäre Gemeinkosten 4.000 € (gibt 50.000 kWh ab, davon 5.000 kWh an die Reparaturstelle). Reparaturstelle primäre Gemeinkosten 19.500 € (gibt 2.000 Std. ab, davon 100 Std. an die Stromstelle). Wie hoch ist der Verrechnungspreis je kWh?",
+ ["0,08 €","0,10 €","0,12 €","0,20 €"],1,
+ "Strom: 4.000 + 100 q2 = 50.000 q1. Reparatur: 19.500 + 5.000 q1 = 2.000 q2. Lösung: q1 = 0,10 €/kWh, q2 = 10 €/Std.","Skript 5.5");
+C(T5,"Gleichungsverfahren (siehe oben): Wie hoch ist der Verrechnungspreis der Reparaturstelle je Stunde?",
+ ["8,00 €","9,75 €","10,00 €","10,47 €"],2,
+ "q2 ergibt sich aus 4.000 + 100 q2 = 50.000 · 0,10 → 100 q2 = 1.000 → q2 = 10 €/Std.","Skript 5.5");
+C(T5,"Stufenleiterverfahren: Die Stromstelle (4.000 €, 50.000 kWh gesamt) wird zuerst umgelegt. Wie hoch ist der Verrechnungspreis je kWh?",
+ ["0,08 €","0,10 €","0,40 €","0,80 €"],0,
+ "4.000 / 50.000 = 0,08 €/kWh. Die Stromstelle gibt auch an die nachfolgende Reparaturstelle ab (5.000 kWh · 0,08 = 400 €).","Skript 5.5");
+C(T5,"Stufenleiterverfahren: Die Reparaturstelle (19.500 € primär + 400 € Umlage der Stromstelle) gibt 2.000 Std. ab, davon 100 Std. an die bereits abgerechnete Stromstelle. Wie hoch ist der Verrechnungspreis je Stunde?",
+ ["9,95 €","10,00 €","10,47 €","19,90 €"],2,
+ "Leistungen an die Stromstelle werden nicht berücksichtigt: 19.900 / (2.000 – 100) = 10,47 €/Std.","Skript 5.5");
+C(T5,"BAB (Übung Teil 5): Gemeinkosten der Materialstelle nach ibL 330.302 €, Materialeinzelkosten 1.300.000 €. Wie hoch ist der Ist-Zuschlag?",
+ ["10,0 %","20,3 %","25,4 %","33,0 %"],2,
+ "330.302 / 1.300.000 = 25,4 %.","Übung Teil 5, BAB");
+C(T5,"Normalzuschlag Materialstelle 10 % auf MEK 1.300.000 €. Wie hoch sind die verrechneten Gemeinkosten?",
+ ["13.000 €","130.000 €","330.302 €","1.300.000 €"],1,
+ "1.300.000 · 10 % = 130.000 €.","Übung Teil 5, BAB");
+C(T5,"Materialstelle: verrechnete Gemeinkosten (Normal) 130.000 €, Ist-Gemeinkosten 330.302 €. Wie hoch ist die Über-/Unterdeckung?",
+ ["Überdeckung 200.302 €","Unterdeckung 200.302 €","Unterdeckung 130.000 €","Überdeckung 330.302 €"],1,
+ "130.000 – 330.302 = – 200.302 €: Unterdeckung. Der Normalzuschlag (10 %) ist deutlich zu niedrig gegenüber dem Ist-Zuschlag (25,4 %).","Übung Teil 5, BAB");
+C(T5,"Vorfertigung: Ist-Gemeinkosten 544.461 €, FEK 450.000 €, Normalzuschlag 120 %. Wie hoch sind verrechnete Gemeinkosten und Abweichung?",
+ ["Verrechnet 540.000 €, Unterdeckung 4.461 €","Verrechnet 540.000 €, Überdeckung 4.461 €","Verrechnet 544.461 €, keine Abweichung","Verrechnet 450.000 €, Unterdeckung 94.461 €"],0,
+ "450.000 · 120 % = 540.000 €. 540.000 – 544.461 = – 4.461 € (Unterdeckung, ca. 0,8 %). Ist-Zuschlag 121,0 %.","Übung Teil 5, BAB");
+Q(T5,"Im BAB der Übung (Teil 5) liegen Normalzuschlag und Ist-Zuschlag wie folgt: Material 10 % / 25,4 %, Vorfertigung 120 % / 121 %, Endfertigung 200 % / 235 %, Verwaltung+Vertrieb 20 % / 18,7 %. Wie ist das Ergebnis zu interpretieren?",
+ ["Material und Endfertigung sind deutlich unterdeckt, Vorfertigung nahezu ausgeglichen, Verwaltung/Vertrieb überdeckt",
+  "Alle Stellen sind überdeckt",
+  "Alle Stellen sind unterdeckt",
+  "Nur Verwaltung/Vertrieb ist unterdeckt"],
+ "Ist-Zuschlag über Normalzuschlag = Unterdeckung (Kalkulation zu niedrig). Die Normalzuschläge sollten für Material und Endfertigung angepasst werden.","Übung Teil 5, BAB");
+
+/* ===== T6: Kostenträgerrechnung ===== */
+const BRAU =
+"Brau & Co. hat im letzten Monat 200.000 l Bier gebraut und komplett verkauft:\n" +
+"Fertigungsmaterial 72.000 €, Materialgemeinkosten 3.600 €, Fertigungslöhne 28.000 €, Fertigungsgemeinkosten 25.200 €, " +
+"Sondereinzelkosten der Fertigung 7.200 €, Verwaltungs-/Vertriebsgemeinkosten 12.800 €, Sondereinzelkosten Vertrieb (Provision) 3.200 €, Umsatzerlös 164.000 €.";
+const AEQ =
+"Sortenfertigung: Mengen A 1.000, B 4.000, C 2.000 Stück. Kosten: Material 59.200 €, Fertigung 35.200 €, Verwaltung/Vertrieb 42.000 €.\n" +
+"Äquivalenzziffern Material A 0,6 / B 1,0 / C 1,4; Fertigung A 0,8 / B 1,0 / C 2,0; Verwaltung/Vertrieb A, B, C jeweils 1,0.";
+const KUP =
+"Kuppelproduktion mit Herstellkosten von insgesamt 270.000 €: Produkt A 6.000 t zu 50 €/t, Produkt B 4.000 t zu 25 €/t, Produkt C 5.000 t zu 10 €/t. " +
+"Verwaltungs-/Vertriebsgemeinkostenzuschlag 5 %; Sondereinzelkosten Vertrieb: A 2,00 €/t, B 5,50 €/t.";
+const MASCH =
+"Plastikbecher-Hersteller: Anschaffungskosten der Maschine 84.000 €, Nutzungsdauer 10 Jahre (linear), kalkulatorische Zinsen 8 % auf den Durchschnittswert, " +
+"Energie 15 kWh je Std. à 0,12 €/kWh, Stromgrundgebühr 40 €/Monat, Instandhaltung 4.800 €/Jahr, Raumkosten 20 qm à 30 €/qm und Monat, " +
+"Werkzeugkosten 200 €/Monat, Betriebsstoffe 120 €/Monat, Laufzeit 140 Std. im Monat.";
+
+Q(T6,"Welche Aufgaben hat die Kostenträgerrechnung?",
+ ["Kalkulation (Stückkosten), kurzfristige Erfolgsrechnung, Bestandsbewertung und Informationen für preispolitische Entscheidungen",
+  "Verteilung der Gemeinkosten auf Kostenstellen",
+  "Abgrenzung neutraler Aufwendungen",
+  "Erfassung der Kostenarten"],
+ "Die Kostenträgerrechnung ist die letzte Stufe: Wofür sind die Kosten angefallen?");
+
+Q(T6,"Welche Arten von Kostenträgern gibt es?",
+ ["Absatzleistungen (Produkte, Dienstleistungen) und innerbetriebliche Leistungen",
+  "Nur verkaufte Produkte",
+  "Nur Fremdleistungen",
+  "Kostenstellen und Kostenarten"],
+ "Innerbetriebliche Leistungen können aktivierbar (Anlagenauftrag) oder nicht aktivierbar (Gemeinkostenauftrag) sein; Absatzleistungen auftrags- oder lagerbestimmt.");
+
+Q(T6,"Was ist die Kostenträgerstückrechnung?",
+ ["Die Kalkulation: Kosten werden auf eine Leistungseinheit (Stück) bezogen",
+  "Die Periodenrechnung Leistung – Kosten",
+  "Die Verteilung der Kosten auf Kostenstellen",
+  "Der Soll-Ist-Vergleich"],
+ "Die Kostenträgerzeitrechnung ist dagegen die Periodenrechnung (kurzfristige Erfolgsrechnung).");
+
+Q(T6,"Was ist die Nachkalkulation?",
+ ["Kalkulation nach der Leistungserstellung auf Basis der Ist-Kosten zur Erfolgskontrolle und Überprüfung der Vorkalkulation",
+  "Überschlägige Kalkulation vor Auftragsannahme",
+  "Kalkulation bei langen Produktionszeiten während der Fertigung",
+  "Berechnung der Zuschlagssätze"],
+ "Vorkalkulation: bei neuen Produkten/Zusatzaufträgen. Zwischenkalkulation: bei langen Produktionszeiten (z. B. Schiffe).");
+
+Q(T6,"Welches Kalkulationsverfahren passt zur einfachen Massenfertigung (z. B. Strom, Zement)?",
+ ["Divisionskalkulation (einstufig)","Zuschlagskalkulation","Äquivalenzziffernkalkulation","Restwertmethode"],
+ "Ein Produkt, keine Lagerbestandsveränderungen: Gesamtkosten durch Menge.");
+
+Q(T6,"Welches Verfahren passt zur Sortenfertigung (z. B. Biersorten, Bleche in verschiedenen Stärken)?",
+ ["Äquivalenzziffernkalkulation","Einstufige Divisionskalkulation","Zuschlagskalkulation","Restwertmethode"],
+ "Artähnliche Produkte, deren Kostenunterschiede durch Äquivalenzziffern berücksichtigt werden.");
+
+Q(T6,"Welches Verfahren passt zur Serien- und Einzelfertigung (z. B. Autos, Möbel, Maschinen, Schiffe)?",
+ ["Zuschlagskalkulation","Divisionskalkulation","Äquivalenzziffernkalkulation","Verteilungsmethode"],
+ "Trennung in Einzel- und Gemeinkosten; Gemeinkosten über Zuschlagssätze.");
+
+Q(T6,"Welches Verfahren passt zur Kuppelproduktion (z. B. Mineralölprodukte, Fleisch)?",
+ ["Restwertmethode (Haupt-/Nebenprodukte) bzw. Verteilungsmethode (mehrere Hauptprodukte)","Einstufige Divisionskalkulation","Zuschlagskalkulation","Maschinenstundensatzrechnung"],
+ "Eine verursachungsgerechte Kostenaufteilung ist bei Kuppelproduktion nicht möglich.");
+
+Q(T6,"Welche Voraussetzung gilt für die einstufige Divisionskalkulation?",
+ ["Einproduktunternehmen und keine Lagerbestandsveränderungen",
+  "Mehrproduktunternehmen",
+  "Trennung von Einzel- und Gemeinkosten",
+  "Mehrstufige Fertigung mit Zwischenlagern"],
+ "k = K / x. Mit Lagerbestandsveränderungen wird zwei- oder dreistufig gerechnet.");
+
+Q(T6,"Wie funktioniert die zweistufige Divisionskalkulation?",
+ ["k = HK / produzierte Menge + Verwaltungs-/Vertriebskosten / abgesetzte Menge",
+  "k = Gesamtkosten / abgesetzte Menge",
+  "k = HK / abgesetzte Menge",
+  "k = Einzelkosten + Gemeinkosten"],
+ "Verwaltung und Vertrieb werden nur auf die tatsächlich verkauften Einheiten verteilt.");
+
+Q(T6,"Was gibt die Äquivalenzziffer an?",
+ ["Das Verhältnis der Kosten eines Produkts zu den Kosten des Einheitsprodukts (ÄZ = 1)","Das Mengenverhältnis der Sorten","Das Preisverhältnis am Markt (immer)","Das Gewinnverhältnis"],
+ "Bei der Verteilungsmethode in der Kuppelproduktion kann auch der Marktpreis als ÄZ dienen (Tragfähigkeit).");
+
+Q(T6,"Welche Reihenfolge ist bei der Äquivalenzziffernkalkulation richtig?",
+ ["Einheitssorte (ÄZ = 1) bestimmen → Menge · ÄZ = Recheneinheiten → Gesamtkosten / Summe der Recheneinheiten → Kosten je Recheneinheit · ÄZ je Sorte",
+  "Gesamtkosten durch Gesamtmenge → Zuschläge addieren → Gewinn aufschlagen",
+  "Einzelkosten + Gemeinkosten-Zuschlag → HK → SK",
+  "Marktpreis – Gewinn = Selbstkosten"],
+ "So werden artähnliche Sorten in einer einheitlichen Recheneinheit vergleichbar.");
+
+Q(T6,"Was ist Kuppelproduktion?",
+ ["Mehrere Produkte entstehen zwangsläufig gleichzeitig aus demselben Prozess (z. B. Rohöldestillation)",
+  "Ein Produkt wird in großen Losgrößen gefertigt",
+  "Mehrere unabhängige Produkte werden auf derselben Anlage nacheinander gefertigt",
+  "Ein Produkt wird nur einmal hergestellt"],
+ "Das Mengenverhältnis kann konstant sein oder variieren.");
+
+Q(T6,"Wann und wie wird die Restwertmethode angewendet?",
+ ["Bei einem Hauptprodukt und Nebenprodukten: HK Hauptprodukt = Gesamt-HK – Nettoerlöse der Nebenprodukte",
+  "Bei mehreren gleichwertigen Hauptprodukten: Verteilung nach Marktpreisen",
+  "Nur bei Einzelfertigung",
+  "Nur bei Dienstleistungsunternehmen"],
+ "Die HK des Hauptprodukts hängen von den Erlösen der Nebenprodukte ab. Nettoerlös = Erlös – Sondereinzelkosten Vertrieb.");
+
+Q(T6,"Was kennzeichnet die Verteilungsmethode bei der Kuppelproduktion?",
+ ["Die Kosten werden nach Äquivalenzziffern (häufig Marktpreisen = Tragfähigkeit) auf mehrere Hauptprodukte verteilt; nicht verursachungsgerecht",
+  "Die Kosten werden verursachungsgerecht zugerechnet",
+  "Die Nebenprodukte tragen alle Kosten",
+  "Es werden nur variable Kosten verteilt"],
+ "Die Stückkosten sind keine Entscheidungsgrundlage; sie dienen v. a. der Bestandsbewertung.");
+
+Q(T6,"Was kennzeichnet die Zuschlagskalkulation?",
+ ["Trennung in Einzel- und Gemeinkosten; Gemeinkosten werden über Zuschlagssätze (Bezugsgrößen) auf die Kostenträger verrechnet",
+  "Division der Gesamtkosten durch die Menge",
+  "Verteilung der Kosten nach Marktpreisen",
+  "Nur variable Kosten werden verrechnet"],
+ "Anwendung in Serien- und Einzelfertigung mit mehrstufiger Produktion und Lagerbeständen.");
+
+Q(T6,"Worin unterscheiden sich summarische und differenzierte Zuschlagskalkulation?",
+ ["Bei der differenzierten werden Gemeinkosten nach Kostenstellen bzw. Betriebsbereichen getrennt zugeschlagen",
+  "Die summarische rechnet nur mit Einzelkosten",
+  "Die differenzierte kennt keine Zuschlagssätze",
+  "Es gibt keinen Unterschied"],
+ "Die summarische Zuschlagskalkulation arbeitet mit einem Gemeinkostensatz auf die Einzelkosten, ohne Kostenstellentrennung.");
+
+Q(T6,"Warum wird in der Fertigung der Maschinenstundensatz statt eines Zuschlags auf Fertigungslöhne verwendet?",
+ ["Durch Technisierung sinkt der Lohnanteil und die Zuschläge werden extrem hoch; Maschinenlaufzeit bildet die Kostenverursachung besser ab",
+  "Weil Löhne in der Kalkulation verboten sind",
+  "Weil Maschinen keine Gemeinkosten verursachen",
+  "Weil die Berechnung immer einfacher ist"],
+ "Bezugsgrößenkalkulation: Maschinenkosten werden aus den FGK herausgerechnet und auf die Laufzeit bezogen.");
+
+Q(T6,"Wie berechnen sich die Herstellkosten in der Zuschlagskalkulation?",
+ ["MEK + MGK + FEK + FGK + Sondereinzelkosten der Fertigung","MEK + FEK","HK + VwGK + VtGK","Materialkosten + Vertriebskosten"],
+ "HK = Materialkosten + Fertigungskosten.");
+
+Q(T6,"Wie berechnen sich die Selbstkosten?",
+ ["Herstellkosten + Verwaltungs- und Vertriebsgemeinkosten + Sondereinzelkosten des Vertriebs","Herstellkosten + Gewinn","Materialkosten + Fertigungskosten","Einzelkosten + fixe Kosten"],
+ "SK = HK + VwGK + VtGK + SEV.");
+
+Q(T6,"Was sind Sondereinzelkosten des Vertriebs?",
+ ["Direkt zurechenbare Vertriebskosten, z. B. Provisionen, Zölle, Frachten, Verkaufsförderung","Verwaltungsgemeinkosten","Fertigungslizenzen","Werkzeugkosten"],
+ "Sondereinzelkosten der Fertigung sind z. B. Fertigungslizenzen, auswärtige Fertigung, Spezialwerkzeuge.");
+
+Q(T6,"Welche Bestandteile sind handelsrechtlich Pflicht bei der Bewertung der Herstellungskosten (Mindestherstellungskosten)?",
+ ["Material- und Fertigungseinzelkosten, Sondereinzelkosten der Fertigung sowie Material- und Fertigungsgemeinkosten",
+  "Nur die Einzelkosten",
+  "Alle Selbstkosten einschließlich Vertrieb",
+  "Nur das Fertigungsmaterial"],
+ "Wahlrecht: Verwaltungsgemeinkosten (und Fremdkapitalzinsen). Aktivierungsverbot: Forschungs- und Vertriebskosten. Kalkulatorische Kosten dürfen nicht angesetzt werden.");
+
+Q(T6,"Welche Kosten dürfen handelsrechtlich NICHT in die Herstellungskosten einbezogen werden?",
+ ["Vertriebskosten und Forschungskosten (Aktivierungsverbot)","Materialgemeinkosten","Fertigungsgemeinkosten","Fertigungseinzelkosten"],
+ "Zusätzlich dürfen kalkulatorische Kosten nicht angesetzt werden.");
+
+Q(T6,"Welche Reihenfolge ist in der Absatzkalkulation richtig?",
+ ["Selbstkosten + Gewinn = Barverkaufspreis; + Skonto = Zielverkaufspreis; + Rabatt = Listenverkaufspreis; + Mehrwertsteuer = Angebotspreis",
+  "Selbstkosten + Rabatt + Skonto + Gewinn + MwSt",
+  "Selbstkosten + MwSt + Rabatt + Skonto + Gewinn",
+  "Selbstkosten + Skonto + Gewinn + MwSt + Rabatt"],
+ "Skonto wird auf den Zielverkaufspreis berechnet (im Hundert), Rabatt auf den Listenverkaufspreis.");
+
+Q(T6,"Welche Aussage zum Umsatzkostenverfahren (UKV) stimmt?",
+ ["Es erfordert eine Kostenstellen- und Kostenträgerrechnung und ermöglicht Ergebnisse nach Produkten, Gebieten und Kunden",
+  "Es kommt ohne Kostenträgerrechnung aus",
+  "Es gliedert nach Kostenarten",
+  "Es ermittelt nur das Gesamtergebnis"],
+ "UKV: Umsatzerlöse – Kosten des Umsatzes (aus Kalkulation). Gesamtkostenverfahren: Leistung der Periode (Umsatz ± Bestandsveränderungen) – Gesamtkosten nach Kostenarten.");
+
+RF(T6,"Die Kostenträgerrechnung dient der Kostenkontrolle der Abteilungen und Verantwortungsbereiche.",false,
+ "Das ist Aufgabe der Kostenstellenrechnung.","Übungsblatt Multiple Choice");
+RF(T6,"Die Kostenträgerrechnung dient der Ermittlung der kurz- bzw. langfristigen Preisuntergrenze.",true,
+ "Kosten je Produkt (als Teil- oder Vollkosten) liefern Informationen zur Preisgestaltung.","Übungsblatt Multiple Choice");
+RF(T6,"Die Kostenträgerrechnung legt die Absatzpreise fest.",false,
+ "Sie liefert Informationen, der Absatzpreis ist eine Marktentscheidung.","Übungsblatt Multiple Choice");
+RF(T6,"Absatzleistungen in Form von Produkten können Kostenträger sein.",true,
+ "Kostenträger sind Absatzleistungen und innerbetriebliche Leistungen.","Übungsblatt Multiple Choice");
+RF(T6,"Innerbetriebliche Leistungen können Kostenträger sein.",true,
+ "Z. B. selbsterstellte Anlagen oder interne Aufträge.","Übungsblatt Multiple Choice");
+RF(T6,"Fremdleistungen sind Kostenträger.",false,
+ "Fremdleistungen sind von Dritten bezogen und keine eigenen Kostenträger.","Übungsblatt Multiple Choice");
+RF(T6,"Der Lagerbestand an Fertigerzeugnissen kann Kostenträger sein.",true,
+ "Lagerbestimmte Aufträge sind Kostenträger.","Übungsblatt Multiple Choice");
+RF(T6,"Die Divisionskalkulation ermittelt Stückkosten, indem die Gesamtkosten durch die Ausbringungsmenge dividiert werden.",true,
+ "k = K / x.","Übungsblatt Multiple Choice");
+RF(T6,"Die Divisionskalkulation kann ein- oder mehrstufig durchgeführt werden.",true,
+ "Ein-, zwei- und dreistufig.","Übungsblatt Multiple Choice");
+RF(T6,"Die Divisionskalkulation eignet sich gut zur Kalkulation in Dienstleistungsunternehmen.",false,
+ "Sie eignet sich für Massenfertigung eines Produkts, nicht für heterogene Dienstleistungen.","Übungsblatt Multiple Choice");
+RF(T6,"Die Divisionskalkulation wird überwiegend zur Kalkulation bei Serienfertigung eingesetzt.",false,
+ "Überwiegend bei Massenfertigung, bei Serienfertigung die Zuschlagskalkulation.","Übungsblatt Multiple Choice");
+RF(T6,"Die Äquivalenzziffernkalkulation kann nur angewendet werden, wenn alle Produkte in gleicher Menge hergestellt werden.",false,
+ "Die Mengen können unterschiedlich sein; sie fließen über Menge · ÄZ ein.","Übungsblatt Multiple Choice");
+RF(T6,"Die Äquivalenzziffernkalkulation ist eine Variante der Divisionskalkulation.",true,
+ "Sonderform für artähnliche Produkte.","Übungsblatt Multiple Choice");
+RF(T6,"Die Äquivalenzziffernkalkulation berücksichtigt, dass die Kosten bei der Produktion verschiedener Sorten in unterschiedlichem Verhältnis zueinander stehen.",true,
+ "Das erfolgt durch die Äquivalenzziffern.","Übungsblatt Multiple Choice");
+RF(T6,"Die Äquivalenzziffernkalkulation wird überwiegend in der Einzelfertigung eingesetzt.",false,
+ "Sie wird in der Sortenfertigung eingesetzt.","Übungsblatt Multiple Choice");
+RF(T6,"Die Zuschlagskalkulation basiert auf der Trennung von Einzel- und Gemeinkosten.",true,
+ "Kernidee der Zuschlagskalkulation.","Übungsblatt Multiple Choice");
+RF(T6,"Die Zuschlagskalkulation dient zur Ermittlung von Gewinnzuschlägen.",false,
+ "Sie ermittelt Selbstkosten; Gewinnzuschläge kommen in der Absatzkalkulation.","Übungsblatt Multiple Choice");
+RF(T6,"Die Zuschlagskalkulation rechnet die Gemeinkosten über Bezugsgrößen den Kostenträgern zu.",true,
+ "Über Zuschlagssätze auf die Bezugsgrößen.","Übungsblatt Multiple Choice");
+RF(T6,"Herstell- und Selbstkosten sind immer identisch.",false,
+ "Selbstkosten enthalten zusätzlich Verwaltungs- und Vertriebskosten.","Übungsblatt Multiple Choice");
+RF(T6,"Herstell- und Selbstkosten unterscheiden sich durch die Einbeziehung von Vertriebs- und Verwaltungsgemeinkosten.",true,
+ "SK = HK + VwGK + VtGK + SEV.","Übungsblatt Multiple Choice");
+RF(T6,"Herstell- und Selbstkosten unterscheiden sich durch die Einbeziehung von kalkulatorischen Kosten.",false,
+ "Kalkulatorische Kosten sind in beiden enthalten.","Übungsblatt Multiple Choice");
+RF(T6,"Herstell- und Selbstkosten sind wichtige Größen im Kalkulationsschema der Zuschlagskalkulation.",true,
+ "Zwischen- bzw. Endergebnis des Schemas.","Übungsblatt Multiple Choice");
+RF(T6,"Das Umsatzkostenverfahren wird auch als Kostenträgerzeitrechnung bezeichnet.",true,
+ "Es stellt Leistung und Kosten einer Periode je Kostenträger gegenüber.","Übungsblatt Multiple Choice");
+RF(T6,"Das Umsatzkostenverfahren ist im Gegensatz zum Gesamtkostenverfahren nicht geeignet, um betriebswirtschaftliche Entscheidungen zu treffen.",false,
+ "Das UKV liefert Ergebnisse je Produkt und eignet sich gut für Entscheidungen.","Übungsblatt Multiple Choice");
+RF(T6,"Die Kalkulation zu Vollkosten liefert die kurzfristige und langfristige Preisuntergrenze.",false,
+ "Sie liefert nur die langfristige Preisuntergrenze.","Übungsblatt Multiple Choice");
+RF(T6,"Die Kalkulation zu Vollkosten ist für kurzfristige betriebliche Entscheidungen nicht geeignet.",true,
+ "Fixkosten sind bei kurzfristigen Entscheidungen nicht entscheidungsrelevant.","Übungsblatt Multiple Choice");
+RF(T6,"Die Kalkulation zu Vollkosten missachtet das Prinzip der Kostenverursachung.",true,
+ "Sie arbeitet nach dem Durchschnittsprinzip.","Übungsblatt Multiple Choice");
+
+C(T6,BRAU + "\n\nWie hoch sind die Herstellkosten je 100 l Bier?",
+ ["60,00 €","68,00 €","76,00 €","82,00 €"],1,
+ "HK = 72.000 + 3.600 + 28.000 + 25.200 + 7.200 = 136.000 €. 136.000 / 2.000 (Einheiten à 100 l) = 68,00 € je 100 l.","Übung Teil 6, Aufgabe 1a");
+C(T6,BRAU + "\n\nWie hoch sind die Selbstkosten je 100 l Bier?",
+ ["68,00 €","72,00 €","76,00 €","82,00 €"],2,
+ "SK = HK 136.000 + 12.800 + 3.200 = 152.000 €. 152.000 / 2.000 = 76,00 € je 100 l.","Übung Teil 6, Aufgabe 1a");
+C(T6,BRAU + "\n\nWie viel verdient Brau & Co. an 100 l Bier?",
+ ["4,00 €","6,00 €","8,00 €","12,00 €"],1,
+ "Umsatz 164.000 / 2.000 = 82,00 € je 100 l; Selbstkosten 76,00 €. Gewinn = 6,00 € je 100 l (gesamt 12.000 €).","Übung Teil 6, Aufgabe 1b");
+C(T6,BRAU + "\n\nIm nächsten Monat werden wieder 200.000 l hergestellt, aber nur 160.000 l abgesetzt. Verwaltungs-/Vertriebsgemeinkosten bleiben konstant (12.800 €); die Provision (SEV) sinkt anteilig. Wie hoch sind die Selbstkosten je 100 l?",
+ ["76,00 €","77,00 €","77,60 €","80,00 €"],2,
+ "HK je 100 l bleibt 68,00 €. Vw/Vt: 12.800 / 1.600 = 8,00 €. SEV: 3.200 · 160/200 = 2.560 € → 1,60 € je 100 l. SK = 68 + 8 + 1,60 = 77,60 €.","Übung Teil 6, Aufgabe 1c");
+C(T6,AEQ + "\n\nWie hoch ist die Summe der Recheneinheiten bei den Materialkosten?",
+ ["6.200","7.000","7.400","8.800"],2,
+ "A: 1.000 · 0,6 = 600; B: 4.000 · 1,0 = 4.000; C: 2.000 · 1,4 = 2.800 → Summe 7.400. Kosten je Recheneinheit: 59.200 / 7.400 = 8,00 €.","Übung Teil 6, Aufgabe 2");
+C(T6,AEQ + "\n\nWie hoch sind die Materialkosten je Stück der Sorte C?",
+ ["8,00 €","9,60 €","11,20 €","14,00 €"],2,
+ "Kosten je Recheneinheit 8,00 € · ÄZ 1,4 = 11,20 € je Stück.","Übung Teil 6, Aufgabe 2");
+C(T6,AEQ + "\n\nWie hoch sind die Fertigungskosten je Stück der Sorte C?",
+ ["4,00 €","6,00 €","8,00 €","11,20 €"],2,
+ "Recheneinheiten Fertigung: 800 + 4.000 + 4.000 = 8.800. 35.200 / 8.800 = 4,00 €. Sorte C: 4,00 · 2,0 = 8,00 € je Stück.","Übung Teil 6, Aufgabe 2");
+C(T6,AEQ + "\n\nWie hoch sind die Herstellkosten je Stück der Sorte A?",
+ ["4,80 €","8,00 €","12,00 €","14,00 €"],1,
+ "Material 4,80 € (8,00 · 0,6) + Fertigung 3,20 € (4,00 · 0,8) = 8,00 € je Stück.","Übung Teil 6, Aufgabe 2");
+C(T6,AEQ + "\n\nWie hoch sind die Selbstkosten je Stück der Sorte C?",
+ ["19,20 €","22,00 €","25,20 €","31,20 €"],2,
+ "HK C = 11,20 + 8,00 = 19,20 €. Verwaltung/Vertrieb 42.000 / 7.000 = 6,00 €. SK = 25,20 € (A: 14,00 €, B: 18,00 €).","Übung Teil 6, Aufgabe 2");
+C(T6,"Blechwalzwerk: A 1.000 t, B 500 t, C 800 t; Gesamtkosten 121.000 €. A kostet 20 % mehr als das Standardblech B, C 10 % weniger (ÄZ A 1,2 / B 1,0 / C 0,9). Wie hoch sind die Kosten je Tonne Blech A?",
+ ["50,00 €","54,00 €","60,00 €","72,00 €"],2,
+ "Recheneinheiten: 1.200 + 500 + 720 = 2.420. 121.000 / 2.420 = 50 € je RE. A: 50 · 1,2 = 60 € je t (B: 50 €, C: 45 €).","Skript 6.2.3");
+C(T6,KUP + "\n\nWie hoch sind die Herstellkosten je Tonne von Produkt A (Verteilungsmethode nach Marktwerten)?",
+ ["27,00 €","30,00 €","45,00 €","50,00 €"],1,
+ "Marktwerte: A 300.000, B 100.000, C 50.000 → 450.000. Kosten je Euro Marktwert: 270.000 / 450.000 = 0,60. A: 50 · 0,60 = 30 € je t.","Übung Teil 6, Aufgabe 3a");
+C(T6,KUP + "\n\nWie hoch sind die Selbstkosten je Tonne von Produkt B (Verteilungsmethode)?",
+ ["15,00 €","15,75 €","21,25 €","25,00 €"],2,
+ "HK B = 25 · 0,60 = 15,00 €. + 5 % Zuschlag (0,75 €) + SEV 5,50 € = 21,25 € je t. (A: 33,50 €, C: 6,30 €).","Übung Teil 6, Aufgabe 3a");
+C(T6,KUP + "\n\nB und C sind Nebenprodukte von A (Restwertmethode). Wie hoch sind die Nettoerlöse der Nebenprodukte insgesamt?",
+ ["100.000 €","128.000 €","150.000 €","178.000 €"],1,
+ "B: (25 – 5,50) · 4.000 = 78.000 €; C: 10 · 5.000 = 50.000 €. Summe 128.000 €.","Übung Teil 6, Aufgabe 3b");
+C(T6,KUP + "\n\nB und C sind Nebenprodukte von A (Restwertmethode). Wie hoch sind die Herstellkosten je Tonne von A?",
+ ["23,67 €","30,00 €","33,50 €","45,00 €"],0,
+ "HK Hauptprodukt = 270.000 – 128.000 = 142.000 €. 142.000 / 6.000 t = 23,67 € je t.","Übung Teil 6, Aufgabe 3b");
+C(T6,KUP + "\n\nB und C sind Nebenprodukte von A (Restwertmethode). Wie hoch sind die Selbstkosten je Tonne von A?",
+ ["23,67 €","25,92 €","27,92 €","33,50 €"],2,
+ "142.000 + Vw/Vt 13.500 (5 % von 270.000) + SEV 12.000 = 167.500 €. 167.500 / 6.000 = 27,92 € je t. Gewinn 300.000 – 167.500 = 132.500 €.","Übung Teil 6, Aufgabe 3b");
+C(T6,MASCH + "\n\nWie hoch ist die monatliche kalkulatorische Abschreibung?",
+ ["350 €","700 €","840 €","8.400 €"],1,
+ "84.000 / 10 Jahre / 12 Monate = 700 € je Monat.","Übung Teil 6, Aufgabe 4a");
+C(T6,MASCH + "\n\nWie hoch sind die monatlichen kalkulatorischen Zinsen?",
+ ["280 €","336 €","560 €","3.360 €"],0,
+ "Durchschnittswert 84.000 / 2 = 42.000 €. 42.000 · 8 % / 12 = 280 € je Monat.","Übung Teil 6, Aufgabe 4a");
+C(T6,MASCH + "\n\nWie hoch sind die Energiekosten je Monat (ohne Grundgebühr)?",
+ ["120 €","180 €","252 €","1,80 €"],2,
+ "15 kWh · 0,12 €/kWh · 140 Std. = 252 €. Dazu kommt die Grundgebühr von 40 €.","Übung Teil 6, Aufgabe 4a");
+C(T6,MASCH + "\n\nWie hoch ist der Maschinenstundensatz?",
+ ["14,81 €","18,51 €","19,80 €","24,00 €"],1,
+ "Monatskosten: 700 + 280 + 252 + 40 + 400 (Instandhaltung 4.800/12) + 600 (Raum) + 200 + 120 = 2.592 €. 2.592 / 140 Std. = 18,51 € je Stunde.","Übung Teil 6, Aufgabe 4a");
+C(T6,"Maschinenunabhängige Fertigungsgemeinkosten: Hilfslöhne 10.000 €, Sozialaufwendungen 6.000 €, allgemeine Betriebskosten 4.000 €. Bezugsgröße: Fertigungslöhne 12.500 €. Wie hoch ist der Zuschlagssatz?",
+ ["80 %","125 %","160 %","200 %"],2,
+ "FGK 20.000 € / FEK 12.500 € · 100 = 160 %.","Übung Teil 6, Aufgabe 4b");
+C(T6,"Kalkulation für 5.000 Plastikbecher: MEK 750 €, MGK 6 %, FEK 600 €, FGK 160 % auf FEK, Sondereinzelkosten Fertigung 250 €, 30 Maschinenstunden à 18,51 €, Verwaltungs-/Vertriebsgemeinkosten 15 % auf HK. Wie hoch sind die Herstellkosten?",
+ ["2.605,30 €","3.160,30 €","3.634,35 €","3.805,30 €"],1,
+ "750 + 45 (MGK) + 600 + 960 (FGK) + 250 + 555,30 (Maschinen) = 3.160,30 €.","Übung Teil 6, Aufgabe 4c");
+C(T6,"Plastikbecher-Kalkulation: Herstellkosten 3.160,30 €, Verwaltungs-/Vertriebsgemeinkosten 15 % auf HK. Wie hoch sind die Selbstkosten je Becher (5.000 Stück)?",
+ ["0,63 €","0,73 €","0,76 €","3,63 €"],1,
+ "VwVt = 474,05 €. SK = 3.634,35 €. Je Becher: 3.634,35 / 5.000 = 0,73 €.","Übung Teil 6, Aufgabe 4c");
+C(T6,"Zuschlagskalkulation: MEK 1.000 €, MGK 10 %, FEK 800 €, FGK 150 % auf FEK, VwGK 5 % und VtGK 3 % auf die Herstellkosten. Wie hoch sind die Selbstkosten?",
+ ["3.100 €","3.255 €","3.348 €","3.500 €"],2,
+ "MGK 100; FGK 1.200; HK = 1.000 + 100 + 800 + 1.200 = 3.100 €. VwGK 155 €, VtGK 93 € → SK = 3.348 €.","Skript 6.2.5");
+C(T6,"Divisionskalkulation (zweistufig): Herstellkosten 651.000 €, Verwaltungs- und Vertriebskosten 92.200 €. Produziert und abgesetzt werden 42.000 Stück. Wie hoch sind die Selbstkosten je Stück?",
+ ["15,50 €","17,70 €","17,81 €","22,00 €"],1,
+ "651.000 / 42.000 = 15,50 € + 92.200 / 42.000 = 2,20 € → 17,70 € je Stück.","Skript 6.2.2");
+C(T6,"Divisionskalkulation wie zuvor (HK 651.000 €, Vw/Vt 92.200 €, produziert 42.000 Stück), aber nur 40.000 Stück werden abgesetzt, 2.000 Stück gehen auf Lager. Wie hoch sind die Selbstkosten je abgesetztem Stück (Vw/Vt wird nur dem Absatz angelastet)?",
+ ["15,50 €","17,70 €","17,81 €","18,50 €"],2,
+ "15,50 € (HK / 42.000) + 92.200 / 40.000 = 2,31 € → 17,81 €. Der Lagerbestand wird mit 2.000 · 15,50 = 31.000 € bewertet.","Skript 6.2.2");
+C(T6,"Absatzkalkulation: Selbstkosten 100 €, Gewinnaufschlag 20 %, Kundenskonto 3 % (auf den Zielverkaufspreis), Kundenrabatt 10 % (auf den Listenverkaufspreis), Mehrwertsteuer 19 %. Wie hoch ist der Zielverkaufspreis?",
+ ["123,00 €","123,71 €","127,20 €","137,46 €"],1,
+ "Barverkaufspreis 120 € = 97 % des Zielverkaufspreises → 120 / 0,97 = 123,71 €.","Skript 6.2.8");
+C(T6,"Absatzkalkulation: Selbstkosten 100 €, Gewinn 20 %, Skonto 3 % und Rabatt 10 % (jeweils im Hundert), MwSt 19 %. Wie hoch ist der Angebotspreis?",
+ ["137,46 €","150,72 €","163,57 €","180,00 €"],2,
+ "Barverkaufspreis 120 → Zielverkaufspreis 123,71 → Listenverkaufspreis 137,46 (÷ 0,9) → Angebotspreis 137,46 · 1,19 = 163,57 €.","Skript 6.2.8");
+C(T6,"Velo GmbH: Modell A (500 Stück) hat Materialeinzelkosten von 500 € je Stück, Fertigungseinzelkosten von 290 €. Zuschläge: MGK 6,8 %, FGK I 94,4 %, VwGK 6,0 %, VtGK 2,6 %. Wie hoch ist das Betriebsergebnis je Stück bei einem Preis von 1.500 € (Selbstkosten ≈ 1.192 €)?",
+ ["108 €","308 €","972 €","– 223 €"],1,
+ "HK ≈ 500 + 34 + 290 + 274 = 1.098 €. VwGK 66 € + VtGK 28 € → SK ≈ 1.192 €. Ergebnis je Stück ≈ 308 €, gesamt ≈ 153.905 €.","Übung Fallbeispiel 1");
+C(T6,"Velo GmbH, Modell C: Verkaufspreis 3.000 €, Selbstkosten laut Kalkulation 3.223 € je Stück, 600 Stück. Wie hoch ist das Betriebsergebnis je Stück und insgesamt?",
+ ["– 223 € je Stück, ca. – 133.838 € insgesamt","+ 223 € je Stück, ca. + 133.838 € insgesamt","– 223 € je Stück, ca. – 223.000 € insgesamt","0 €, Preis deckt die Kosten"],0,
+ "Der Preis deckt die Vollkosten nicht. Langfristig ist eine Preiserhöhung anzustreben. Mit der Teilkostenrechnung (Deckungsbeiträge) ist aber zu prüfen, ob das Modell trotzdem zur Fixkostendeckung beiträgt.","Übung Fallbeispiel 1");
+Q(T6,"Velo GmbH: Welche Grenze hat die Vollkostenkalkulation und was liefert aussagefähige Informationen für preispolitische Entscheidungen?",
+ ["Fixkosten werden pauschal über Zuschläge zugeordnet und gelten nur für einen Beschäftigungsgrad; aussagefähig ist die Teilkostenrechnung mit Deckungsbeiträgen",
+  "Sie berücksichtigt keine Gemeinkosten; aussagefähig ist die Istkostenrechnung",
+  "Sie darf nur für Einzelfertigung genutzt werden; aussagefähig ist die Divisionskalkulation",
+  "Sie hat keine Grenzen"],
+ "Ein positiver Deckungsbeitrag zeigt den Beitrag zur Fixkostendeckung; jedes Produkt mit positivem DB steigert das Betriebsergebnis.","Übung Fallbeispiel 1");
+
+/* ===== T7: Teilkosten & Entscheidungen ===== */
+const FB2 =
+"Ein Unternehmen stellt drei Produkte her. Umsatzerlöse: A 400.000 €, B 1.000.000 €, C 480.000 €. " +
+"Variable Selbstkosten: A 217.596 €, B 755.643 €, C 369.421 €. Fixe Kosten insgesamt: 420.640 €.";
+const FB3 =
+"Plankosten: Beschäftigungsunabhängige Kosten 560.000 € (Gehälter 300.000, Miete 80.000, Abschreibung 150.000, kalk. Zinsen 30.000). " +
+"Variable Stückkosten: Material 105 €, Fertigungslohn 75 €. Kapazität 8.000 Stück. Der einzige Kunde nimmt nur noch 7.000 Stück ab und zahlt 250 € je Stück.";
+const FB4 =
+"Produkte 1 bis 4 mit Absatzmengen 200 / 400 / 100 / 800 Stück, Stückpreisen 10 / 12 / 6 / 15 €, vollen Stückkosten 5 / 8 / 10 / 16 € " +
+"und variablen Stückkosten 3 / 4 / 7 / 6 €. Fixe Kosten insgesamt 10.300 €.";
+const FB5 =
+"Maximale Produktion 10.000 Stück je Monat. Letzter Monat: 8.400 Stück, variable Kosten 126.000 €, fixe Kosten 84.000 €. " +
+"Geplant für den nächsten Monat: 7.500 Stück zu 30 € je Stück.";
+
+Q(T7,"Was ist der Deckungsbeitrag?",
+ ["Die Differenz zwischen Erlösen und variablen Kosten",
+  "Die Differenz zwischen Erlösen und Vollkosten",
+  "Der Gewinn der Periode",
+  "Die Summe der fixen Kosten"],
+ "Deckungsbeitrag = Beitrag zur Deckung der Fixkosten. Er ist nicht der Betriebsgewinn.");
+
+Q(T7,"Wie berechnet sich das Betriebsergebnis in der Deckungsbeitragsrechnung?",
+ ["Summe der Deckungsbeiträge – fixe Kosten","Umsatz – Deckungsbeitrag","Summe der Deckungsbeiträge + fixe Kosten","Umsatz + variable Kosten"],
+ "DB – Kfix = Betriebsergebnis.");
+
+Q(T7,"Welche Voraussetzung muss für die Teilkostenrechnung erfüllt sein?",
+ ["Trennung der Kosten in variable und fixe Bestandteile","Trennung in Einzel- und Gemeinkosten","Verwendung von Normalkostenzuschlägen","Plankosten für alle Stellen"],
+ "Dafür sind Kenntnisse über die Kosteneinflussgrößen notwendig.");
+
+Q(T7,"Warum ist der Deckungsbeitrag nicht gleich dem Gewinn?",
+ ["Weil er erst die fixen Kosten decken muss","Weil er Steuern enthält","Weil er immer negativ ist","Weil er neutrale Erträge enthält"],
+ "Erst nach Abzug der Fixkosten ergibt sich das Betriebsergebnis.");
+
+Q(T7,"Ein Produkt hat auf Vollkostenbasis einen Verlust, aber einen positiven Deckungsbeitrag; die Fixkosten sind kurzfristig nicht abbaubar. Wie entscheiden Sie?",
+ ["Das Produkt weiterführen, da es zur Fixkostendeckung beiträgt",
+  "Das Produkt sofort einstellen",
+  "Den Preis auf Vollkosten erhöhen, sonst einstellen",
+  "Nur bei negativem Betriebsergebnis weiterführen"],
+ "Bei einer Einstellung sinkt das Betriebsergebnis um den entgangenen Deckungsbeitrag, die Fixkosten bleiben bestehen.");
+
+Q(T7,"Wie lautet die kurzfristige Preisuntergrenze bei Unterbeschäftigung (freie Kapazität)?",
+ ["Variable Stückkosten","Variable Stückkosten + Opportunitätskosten","Vollkosten je Stück","Selbstkosten + Gewinn"],
+ "Jeder Zusatzauftrag mit einem Preis über den variablen Stückkosten steigert das Betriebsergebnis um den zusätzlichen Deckungsbeitrag.");
+
+Q(T7,"Wie lautet die kurzfristige Preisuntergrenze bei Vollbeschäftigung?",
+ ["Variable Stückkosten + Opportunitätskosten (entgangener Deckungsbeitrag)","Variable Stückkosten","Vollkosten","Fixe Stückkosten"],
+ "Bei Annahme des Zusatzauftrags wird auf Deckungsbeiträge bestehender Produktion verzichtet.");
+
+Q(T7,"Welche Programmentscheidung ist ohne Engpass richtig?",
+ ["Alle Produkte mit positivem Deckungsbeitrag bis zur absetzbaren Höchstmenge produzieren",
+  "Nur das Produkt mit dem höchsten Gewinn je Stück produzieren",
+  "Nur Produkte mit positivem Vollkostenergebnis produzieren",
+  "Alle Produkte gleich stark produzieren"],
+ "Produkte mit negativem DB werden nur in Mindestmengen produziert, soweit der Markt das Sortiment fordert.");
+
+Q(T7,"Was ist bei einem Kapazitätsengpass das richtige Entscheidungskriterium?",
+ ["Der Deckungsbeitrag je Einheit der Engpasskapazität (relativer Deckungsbeitrag)","Der absolute Deckungsbeitrag je Stück","Der Gewinn je Stück nach Vollkosten","Der Umsatz je Produkt"],
+ "Der DB je Engpasseinheit liefert die neue Rangfolge.");
+
+Q(T7,"Zwei Produkte konkurrieren um eine Engpassmaschine. A: DB 10 € je Stück, 5 Minuten Maschinenzeit. B: DB 6 € je Stück, 2 Minuten Maschinenzeit. Welches Produkt ist vorzuziehen?",
+ ["B (DB je Minute 3 € gegenüber 2 € bei A)","A (höherer DB je Stück)","Beide gleich","Keines der beiden"],
+ "Bei Engpass zählt der DB je Einheit der Engpasskapazität: A 10/5 = 2 €/Min, B 6/2 = 3 €/Min.");
+
+Q(T7,"Der Betrieb ist voll ausgelastet. Ein Zusatzauftrag über 1.000 Stück zu 18 € je Stück würde Produktion mit einem Deckungsbeitrag von 8 € je Stück verdrängen; die variablen Stückkosten betragen 12 €. Nehmen Sie den Auftrag an?",
+ ["Nein, die Preisuntergrenze liegt bei 20 € (12 € + 8 € Opportunitätskosten)",
+  "Ja, 18 € liegen über den variablen Stückkosten von 12 €",
+  "Ja, wenn die Vollkosten gedeckt sind",
+  "Nein, weil Zusatzaufträge nie angenommen werden"],
+ "Bei Vollbeschäftigung sind variable Stückkosten + Opportunitätskosten maßgeblich: 20 € > 18 €.");
+
+Q(T7,"Wozu dient die mehrstufige Deckungsbeitragsrechnung?",
+ ["Die Fixkosten werden nach Verursachung differenziert (Produktart, Produktgruppe, Unternehmen) und auf der verantworteten Ebene ausgewiesen",
+  "Zur Ermittlung der Zuschlagssätze im BAB",
+  "Zur Bewertung der Fertigerzeugnisse",
+  "Zur Abgrenzung neutraler Erträge"],
+ "Es entstehen mehrere Stufen: DB I (Produkt), DB II (Produktart), DB III (Produktgruppe), Betriebsergebnis.");
+
+Q(T7,"Warum ist die Entscheidung auf Basis der Vollkosten bei kurzfristigen Fragen (z. B. Zusatzauftrag) problematisch?",
+ ["Fixkosten sind nicht abbaufähig und damit nicht entscheidungsrelevant; Vollkosten verzerren die Entscheidung",
+  "Vollkosten sind immer zu niedrig",
+  "Vollkosten enthalten keine Gemeinkosten",
+  "Sie sind verboten"],
+ "Entscheidungsrelevant sind nur die variablen Kosten (sunk costs der Fixkosten).");
+
+Q(T7,"Wie berechnet sich die Break-even-Menge?",
+ ["x = Kfix / Deckungsbeitrag je Stück","x = Kvar / Preis","x = Kfix · db","x = Preis / Kfix"],
+ "Gewinn = db · x – Kfix = 0 → x = Kfix / db.");
+
+RF(T7,"Die Aufteilung der Kosten in fixe und variable Bestandteile ist Voraussetzung für die Durchführung einer Teilkostenrechnung.",true,
+ "Ohne Trennung keine Deckungsbeiträge.","Übungsblatt Multiple Choice");
+RF(T7,"Die Aufteilung der Kosten in fixe und variable Bestandteile kann nur für direkt zurechenbare Einzelkosten erfolgen.",false,
+ "Sie ist auch für Gemeinkosten erforderlich (variable/fixe Gemeinkosten).","Übungsblatt Multiple Choice");
+RF(T7,"Die Aufteilung der Kosten in fixe und variable Bestandteile setzt Kenntnisse von den Kosteneinflussgrößen voraus.",true,
+ "Man muss wissen, wovon die Kosten abhängen.","Übungsblatt Multiple Choice");
+RF(T7,"Die Aufteilung in fixe und variable Kosten ist notwendige Voraussetzung für eine optimale Wirtschaftlichkeitskontrolle.",true,
+ "Nur so lassen sich Soll-Kosten bei Ist-Beschäftigung bestimmen.","Übungsblatt Multiple Choice");
+RF(T7,"Die Teilkostenrechnung führt zu einem höheren Betriebsergebnis.",false,
+ "Das Gesamtergebnis ist identisch, nur die Zurechnung der Fixkosten unterscheidet sich (bei gleichen Beständen).","Übungsblatt Multiple Choice");
+RF(T7,"Die Teilkostenrechnung berücksichtigt grundsätzlich nur entscheidungsrelevante Kosten.",true,
+ "Die variablen Kosten sind für kurzfristige Entscheidungen relevant.","Übungsblatt Multiple Choice");
+RF(T7,"Die Teilkostenrechnung verzichtet auf die Proportionalisierung von Fixkosten.",true,
+ "Fixe Kosten werden nicht auf Produkte verteilt.","Übungsblatt Multiple Choice");
+RF(T7,"Die Teilkostenrechnung dient der kurzfristigen Unternehmenssteuerung.",true,
+ "Z. B. Zusatzaufträge, Sortimentsfragen, Preisuntergrenzen.","Übungsblatt Multiple Choice");
+RF(T7,"Der Deckungsbeitrag entspricht den Gemeinkosten.",false,
+ "Der DB ist Erlös minus variable Kosten.","Übungsblatt Multiple Choice");
+RF(T7,"Der Deckungsbeitrag ist die Differenz zwischen Erlösen und variablen Kosten.",true,
+ "DB = E – Kvar.","Übungsblatt Multiple Choice");
+RF(T7,"Der Deckungsbeitrag ist ein Entscheidungskriterium bei der kurzfristigen Optimierung des Produktsortiments.",true,
+ "Rangfolge nach Deckungsbeiträgen (ggf. relativ zum Engpass).","Übungsblatt Multiple Choice");
+RF(T7,"Die Kalkulation zu Teilkosten rechnet die Kosten nach dem Prinzip der Kostenverursachung zu.",true,
+ "Verursachungsprinzip.","Übungsblatt Multiple Choice");
+RF(T7,"Die Kalkulation zu Teilkosten setzt die Trennung von variablen und fixen Kosten voraus.",true,
+ "Das ist die Grundvoraussetzung.","Übungsblatt Multiple Choice");
+RF(T7,"Die Kalkulation zu Teilkosten ist Grundlage zur Ermittlung von Deckungsbeiträgen.",true,
+ "Preis minus variable Stückkosten.","Übungsblatt Multiple Choice");
+RF(T7,"Die Kalkulation zu Teilkosten berechnet die kurzfristige Preisuntergrenze.",true,
+ "Variable Stückkosten = kurzfristige Preisuntergrenze.","Übungsblatt Multiple Choice");
+RF(T7,"Das Umsatzkostenverfahren auf Teilkostenbasis führt zur Deckungsbeitragsrechnung.",true,
+ "Umsatzerlöse – variable Selbstkosten = Deckungsbeitrag.","Übungsblatt Multiple Choice");
+RF(T7,"Das Betriebsergebnis berechnet sich als Summe der Deckungsbeiträge abzüglich der fixen Kosten.",true,
+ "BE = ΣDB – Kfix.","Übungsblatt Multiple Choice");
+RF(T7,"Der Deckungsbeitrag ist die Differenz zwischen Umsatzerlösen und fixen Kosten.",false,
+ "Es sind die variablen Kosten, nicht die fixen.","Übungsblatt Multiple Choice");
+RF(T7,"Die Höhe der Deckungsbeiträge ist entscheidend bei Entscheidungen zur Optimierung des Produktprogramms.",true,
+ "Rangfolge der Produkte nach DB.","Übungsblatt Multiple Choice");
+RF(T7,"Die Deckungsbeitragsrechnung setzt eine Kostenträgerrechnung voraus.",true,
+ "Deckungsbeiträge werden je Kostenträger (Produkt) ermittelt.","Übungsblatt Multiple Choice");
+
+C(T7,"Preis 135 €, variable Stückkosten 90 €. Wie hoch ist der Deckungsbeitrag je Stück?",
+ ["30 €","45 €","90 €","135 €"],1,
+ "135 – 90 = 45 € je Stück (= Fixkostenbeitrag je Stück).","Skript 6.3");
+C(T7,"Variable Kosten gesamt 90.300 €, fixe Gemeinkosten 45.150 €. Wie hoch ist der Zuschlagssatz der fixen auf die variablen Kosten?",
+ ["33 %","45 %","50 %","150 %"],2,
+ "45.150 / 90.300 = 50 %.","Skript 6.3");
+C(T7,FB2 + "\n\nWie hoch ist der Deckungsbeitrag von Produkt C?",
+ ["– 18.300 €","110.579 €","244.357 €","369.421 €"],1,
+ "480.000 – 369.421 = 110.579 €. Auf Vollkostenbasis zeigt C ein negatives Ergebnis (– 18.300 €), auf Teilkostenbasis trägt es positiv zur Fixkostendeckung bei.","Übung Fallbeispiel 2");
+C(T7,FB2 + "\n\nWie hoch ist das gesamte Betriebsergebnis?",
+ ["116.700 €","182.404 €","537.340 €","958.000 €"],0,
+ "DB A 182.404 + B 244.357 + C 110.579 = 537.340 €. Abzüglich Fixkosten 420.640 € = 116.700 €.","Übung Fallbeispiel 2");
+C(T7,FB2 + "\n\nProdukt C wird auf Basis der Vollkostenrechnung (– 18.300 €) eingestellt. Fixkosten bleiben unverändert. Wie hoch ist dann das Betriebsergebnis?",
+ ["6.121 €","116.700 €","135.000 €","– 18.300 €"],0,
+ "Das Ergebnis sinkt um den Deckungsbeitrag von C: 116.700 – 110.579 = 6.121 €. Die Entscheidung nach Vollkosten war falsch.","Übung Fallbeispiel 2");
+C(T7,FB3 + "\n\nWie hoch sind die Selbstkosten je Stück bei 7.000 Stück?",
+ ["180 €","250 €","260 €","340 €"],2,
+ "Material 735.000 + Lohn 525.000 + Fixkosten 560.000 = 1.820.000 €. / 7.000 = 260 €. Auf Vollkostenbasis wäre der Preis von 250 € nicht ausreichend.","Übung Fallbeispiel 3");
+C(T7,FB3 + "\n\nWie hoch ist das Betriebsergebnis bei Annahme des Auftrags (7.000 Stück zu 250 €)?",
+ ["– 560.000 €","– 70.000 €","+ 70.000 €","+ 490.000 €"],1,
+ "DB je Stück 250 – 180 = 70 €. DB gesamt 490.000 €. Minus Fixkosten 560.000 € = – 70.000 €. Bei Ablehnung würde der Verlust 560.000 € betragen. Der Auftrag ist also kurzfristig anzunehmen.","Übung Fallbeispiel 3");
+C(T7,FB3 + "\n\nWie hoch ist die absolute (kurzfristige) Preisuntergrenze?",
+ ["70 €","180 €","250 €","260 €"],1,
+ "Variable Stückkosten: 105 + 75 = 180 €.","Übung Fallbeispiel 3");
+C(T7,FB3 + "\n\nWie hoch ist die Break-even-Menge bei einem Preis von 250 €?",
+ ["2.240 Stück","3.111 Stück","7.000 Stück","8.000 Stück"],3,
+ "560.000 / (250 – 180) = 8.000 Stück (entspricht der Kapazität).","Übung Fallbeispiel 3");
+C(T7,FB4 + "\n\nWie hoch ist der Deckungsbeitrag je Stück von Produkt 4?",
+ ["– 1 €","6 €","9 €","15 €"],2,
+ "15 – 6 = 9 €. Das ist der höchste DB je Stück. Auf Vollkostenbasis wirkt Produkt 4 mit – 1 € je Stück defizitär.","Übung Fallbeispiel 4");
+C(T7,FB4 + "\n\nWie hoch ist der gesamte Deckungsbeitrag aller vier Produkte?",
+ ["1.400 €","10.300 €","11.700 €","12.000 €"],2,
+ "DB: 1 → 1.400; 2 → 3.200; 3 → – 100; 4 → 7.200. Summe 11.700 €. Minus Fixkosten 10.300 € = 1.400 € Betriebsergebnis.","Übung Fallbeispiel 4");
+C(T7,FB4 + "\n\nDie Produkte 3 und 4 werden gestrichen, der Absatz der Produkte 1 und 2 verdoppelt sich (400 bzw. 800 Stück). Wie hoch ist das Betriebsergebnis?",
+ ["– 1.100 €","1.400 €","5.200 €","9.200 €"],0,
+ "DB: 400 · 7 + 800 · 8 = 9.200 €. Minus Fixkosten 10.300 € = – 1.100 € Verlust (statt der erhofften 5.200 € nach Vollkosten).","Übung Fallbeispiel 4");
+Q(T7,"Worin lag die Fehlentscheidung in Fallbeispiel 4 (Produkte nach Vollkosten gestrichen)?",
+ ["Man orientierte sich an Vollkosten statt an den entscheidungsrelevanten variablen Kosten; Produkt 4 hat den höchsten DB je Stück und hätte gefördert werden müssen",
+  "Produkt 3 hätte auf jeden Fall behalten werden müssen",
+  "Der Absatz von Produkt 1 und 2 war zu hoch",
+  "Fixkosten hätten mit gestrichen werden müssen"],
+ "Die Einstellung von Produkt 3 (DB < 0) war (zufällig) richtig; die Streichung von Produkt 4 falsch.","Übung Fallbeispiel 4");
+C(T7,FB5 + "\n\nWie hoch sind die variablen Stückkosten?",
+ ["10,00 €","12,50 €","15,00 €","25,00 €"],2,
+ "126.000 / 8.400 = 15 € je Stück.","Übung Fallbeispiel 5");
+C(T7,FB5 + "\n\nWie hoch ist das Betriebsergebnis im nächsten Monat bei 7.500 Stück zu 30 €?",
+ ["18.000 €","28.500 €","112.500 €","225.000 €"],1,
+ "Erlös 225.000 – variable Kosten 112.500 – fixe Kosten 84.000 = 28.500 €.","Übung Fallbeispiel 5");
+C(T7,FB5 + "\n\nLohnt sich ein Zusatzauftrag über 1.500 Stück zu 22 € je Stück? Um wie viel steigt das Betriebsergebnis?",
+ ["Nein, der Preis liegt unter den Vollkosten","Ja, um 10.500 € (DB 7 € je Stück)","Ja, um 33.000 €","Nein, die Kapazität reicht nicht aus"],1,
+ "DB = 22 – 15 = 7 € je Stück · 1.500 = 10.500 €. Die Kapazität (9.000 von 10.000 Stück) reicht aus.","Übung Fallbeispiel 5");
+C(T7,FB5 + "\n\nZu welchem kostendeckenden Preis können 7.500 Stück angeboten werden?",
+ ["15,00 €","26,20 €","28,00 €","30,00 €"],1,
+ "(112.500 + 84.000) / 7.500 = 196.500 / 7.500 = 26,20 € je Stück.","Übung Fallbeispiel 5");
+C(T7,"Maschinenanlage mit 50.000 Mengeneinheiten Jahreskapazität, fixe Kosten 400.000 €, variable Kosten 40 € je Einheit, Preis 55 €. Auslastung 80 % (40.000 Einheiten). Ein Zusatzauftrag über 5.000 Einheiten ist zu 45 € je Einheit möglich. Wie verändert sich der Gewinn?",
+ ["Er sinkt um 25.000 €","Er steigt um 25.000 €","Er steigt um 75.000 €","Er bleibt unverändert"],1,
+ "DB des Zusatzauftrags: 45 – 40 = 5 € · 5.000 = 25.000 €. Die Auslastung steigt auf 45.000 (≤ 50.000), die Fixkosten bleiben gleich. Der Gewinn steigt von 200.000 € auf 225.000 €: Annehmen.","Klausur 2023, Aufgabe 7");
+
+/* ===== T8: Plankostenrechnung & neuere Ansätze ===== */
+Q(T8,"Welche Aufgabe hat die Plankostenrechnung?",
+ ["Steuerungs- und entscheidungsrelevante Informationen für die Zielerreichung liefern und durch Plan-/Soll-/Ist-Vergleich die Kostenkontrolle ermöglichen",
+  "Die Steuerlast ermitteln",
+  "Den Jahresabschluss erstellen",
+  "Zahlungsströme planen"],
+ "Voraussetzung sind Planmengen, Planpreise und Planbeschäftigung.");
+
+Q(T8,"Wie berechnen sich die Plankosten?",
+ ["Plan-Menge · Plan-Preis (bei Plan-Beschäftigung)","Ist-Menge · Ist-Preis","Plan-Menge · Ist-Preis","Ist-Menge · Plan-Preis · Plan-Beschäftigung"],
+ "Ist-Kosten = Ist-Menge · Ist-Preis. Soll-Kosten = Plankosten bei Ist-Beschäftigung.");
+
+Q(T8,"Warum ist der Vergleich Plankosten gegen Ist-Kosten wenig aussagefähig?",
+ ["Weil die Ist-Beschäftigung von der Plan-Beschäftigung abweicht; sinnvoll ist der Vergleich Soll-Kosten gegen Ist-Kosten",
+  "Weil Plankosten immer falsch sind",
+  "Weil Ist-Kosten nicht erfasst werden",
+  "Weil Plankosten nur Fixkosten enthalten"],
+ "Die Beschäftigungsabweichung wird durch den Soll-Ist-Vergleich eliminiert.");
+
+Q(T8,"Was unterscheidet starre und flexible Plankostenrechnung?",
+ ["Die flexible trennt fixe und variable Kosten und kann Plankosten für jede Beschäftigung bestimmen; die starre nicht",
+  "Die starre trennt fixe und variable Kosten",
+  "Die flexible arbeitet nur mit Fixkosten",
+  "Es gibt keinen Unterschied"],
+ "Flexible Plankostenrechnung kann auf Vollkosten- oder Teilkostenbasis erfolgen (Grenzplankostenrechnung).");
+
+Q(T8,"Was ist die Grenzplankostenrechnung?",
+ ["Flexible Plankostenrechnung auf Teilkostenbasis","Starre Plankostenrechnung auf Vollkostenbasis","Plankostenrechnung nur für Material","Eine Istkostenrechnung"],
+ "Sie rechnet nur mit den variablen (proportionalen) Plankosten.");
+
+Q(T8,"Wo liegt das Problem der starren Plankostenrechnung?",
+ ["Die verrechneten Plankosten enthalten fixe Kosten und sind deshalb keine aussagefähige Sollgröße",
+  "Sie hat keine Plankosten",
+  "Sie berücksichtigt keine Ist-Kosten",
+  "Sie darf nur für Material verwendet werden"],
+ "Bei Beschäftigungsabweichungen werden Fixkosten nur anteilig verrechnet, so dass die Abweichung nicht interpretierbar ist.");
+
+Q(T8,"Wie entsteht die Beschäftigungsabweichung in der flexiblen Plankostenrechnung?",
+ ["Aus der Differenz Soll-Kosten – verrechnete Plankosten, weil bei geringerer Beschäftigung nicht alle Fixkosten verrechnet werden","Aus Preissteigerungen","Aus Mehrverbrauch","Aus einer falschen Inventur"],
+ "Beschäftigungsabweichung = Soll-Kosten – verrechnete Plankosten.");
+
+Q(T8,"Wie berechnet sich die Preis-/Verbrauchsabweichung?",
+ ["Ist-Kosten – Soll-Kosten","Soll-Kosten – verrechnete Plankosten","Plankosten – Ist-Kosten","Ist-Kosten – verrechnete Plankosten"],
+ "Ursachen: abweichende Faktorpreise und/oder abweichender Verbrauch der Einsatzmenge.");
+
+Q(T8,"Wie berechnet sich die reine Preisabweichung?",
+ ["Ist-Menge · (Ist-Preis – Plan-Preis)","Plan-Menge · (Ist-Preis – Plan-Preis)","Ist-Menge · Plan-Preis","(Ist-Menge – Plan-Menge) · Plan-Preis"],
+ "Ist-Menge zu Ist-Preisen minus Ist-Menge zu Planpreisen.");
+
+Q(T8,"Was ist die Abweichung 2. Grades (Mischabweichung)?",
+ ["Die Mehrkosten aus dem Lohn-/Preisanstieg auf den Mehrverbrauch (Preisänderung · Mengenabweichung)",
+  "Die doppelte Preisabweichung",
+  "Eine Abweichung in der zweiten Periode",
+  "Die Beschäftigungsabweichung"],
+ "Sie entsteht, weil Preis und Menge gleichzeitig abweichen.");
+
+Q(T8,"Welcher Ansatz ermittelt eine Kostenobergrenze ausgehend vom prognostizierten Marktpreis abzüglich Rabatte, Skonti und Plangewinn?",
+ ["Target Costing","Prozesskostenrechnung","Behavioral Accounting","Flexible Plankostenrechnung"],
+ "Die Kostenobergrenze ist Vorgabe für die Produktion (Market into Company).");
+
+Q(T8,"Womit beschäftigt sich das Behavioral Accounting?",
+ ["Mit der Wirkung von Informationen sowie Kosten- und Erlösvorgaben auf das Verhalten der Mitarbeiter","Mit der Zeitwertbilanzierung","Mit Zuschlagssätzen","Mit der Bewertung von Wertpapieren"],
+ "Es untersucht, wie Rechnungswesen-Informationen das Verhalten beeinflussen.");
+
+Q(T8,"Was besagt der Principal-Agent-Ansatz in der Kostenrechnung?",
+ ["Statt Umlageschlüsseln können vertragliche Regelungen (Service-Level-Agreements) zwischen Auftraggebern und Beauftragten die Gemeinkostenzurechnung bestimmen",
+  "Principals sind immer Lieferanten",
+  "Kosten werden nur nach Marktpreisen verteilt",
+  "Es gibt keine praktische Anwendung"],
+ "Er erfasst die Beziehung zwischen Auftraggebern (Principals) und Beauftragten (Agents).");
+
+Q(T8,"Welches Problem der Zuschlagskalkulation soll die Prozesskostenrechnung lösen?",
+ ["Gemeinkosten indirekter Bereiche werden proportional auf Einzelkosten verrechnet und damit nicht verursachungsgerecht zugeordnet",
+  "Die Einzelkosten sind zu hoch",
+  "Die Fixkosten sind zu gering",
+  "Die Kalkulation ist zu detailliert"],
+ "Die Bearbeitung eines Kundenauftrags verursacht ähnliche Kosten unabhängig von der Stückzahl. Aufträge mit wenigen Stück werden zu niedrig, Aufträge mit vielen Stück zu hoch belastet.");
+
+Q(T8,"Unter welchen Namen ist die Prozesskostenrechnung ebenfalls bekannt?",
+ ["Activity-Based Costing (ABC), Cost-Driver-Accounting, aktivitätsorientierte Kostenrechnung","Target Costing","Grenzplankostenrechnung","Equivalence Costing"],
+ "Entwickelt in den 1980er-Jahren von Cooper und Kaplan.");
+
+Q(T8,"Welche Ziele verfolgt die Prozesskostenrechnung?",
+ ["Verursachungsgerechte Produktkosten, Prozessverbesserung/Kostensenkung und Kostenmanagement",
+  "Nur die Steuerminimierung",
+  "Nur die Bestandsbewertung",
+  "Nur die Ermittlung von Zuschlagssätzen für Material"],
+ "Dazu zählen z. B. die Eliminierung nicht wertschöpfender Prozesse und strategische Planung.");
+
+Q(T8,"Wie ist die Prozesshierarchie aufgebaut?",
+ ["Aktivität → Teilprozess (kostenstellenbezogen) → Hauptprozess (kostenstellenübergreifend)","Hauptprozess → Aktivität → Teilprozess","Teilprozess → Kostenstelle → Aktivität","Kostenträger → Kostenart → Prozess"],
+ "Teilprozesse fassen gleichartige Tätigkeiten einer Kostenstelle zusammen, Hauptprozesse sind kostenstellenübergreifend.");
+
+Q(T8,"Welche Beispiele für Hauptprozesse sind im Bankenbereich genannt?",
+ ["Kreditvergabe, Aktienorder bzw. Beratung, Einstellung von Mitarbeitern","Fertigung, Montage","Materialeinkauf, Lagerhaltung","Inventur, Bilanzierung"],
+ "Z. B. Kreditvergabe mit den Teilprozessen Antrag bearbeiten, Prüfung, Bewilligung.");
+
+C(T8,"Starre Plankostenrechnung: Planmenge 2.000 Stück, Plankosten 30.000 €, Verrechnungssatz 15 €/Stück. Ist: 1.500 Stück, Ist-Kosten 28.000 €. Wie hoch sind die verrechneten Plankosten?",
+ ["22.500 €","25.000 €","28.000 €","30.000 €"],0,
+ "1.500 · 15 € = 22.500 €. Die Gesamtabweichung beträgt 28.000 – 22.500 = 5.500 €.","Skript 7.2");
+C(T8,"Flexible Plankostenrechnung: Planmenge 2.000, Plankosten 30.000 €, davon fix 10.000 € (K = 10.000 + 10 · x). Ist: 1.500 Stück, Ist-Kosten 28.000 €. Wie hoch sind die Soll-Kosten?",
+ ["22.500 €","25.000 €","28.000 €","30.000 €"],1,
+ "10.000 + 10 · 1.500 = 25.000 €.","Skript 7.3");
+C(T8,"Wie hoch ist die Beschäftigungsabweichung (Soll-Kosten 25.000 €, verrechnete Plankosten 22.500 €)?",
+ ["2.500 €","3.000 €","5.500 €","10.000 €"],0,
+ "25.000 – 22.500 = 2.500 €. Nur 25 % der Fixkosten (500 von 2.000 Stück) wurden verrechnet.","Skript 7.3");
+C(T8,"Wie hoch ist die Preis-/Verbrauchsabweichung (Ist-Kosten 28.000 €, Soll-Kosten 25.000 €)?",
+ ["2.500 €","3.000 €","5.500 €","28.000 €"],1,
+ "28.000 – 25.000 = 3.000 €. Gesamtabweichung 5.500 = 2.500 Beschäftigungsabweichung + 3.000 Preis-/Verbrauchsabweichung.","Skript 7.3");
+C(T8,"Fertigung: Plan 500 Stück, je Stück 4 Std. à 20 €. Ist: 500 Stück, Stundenlohn 21 €, Fertigungseinzelkosten Ist 50.000 €. Wie hoch ist die Preisabweichung?",
+ ["1.000 €","2.000 €","8.000 €","10.000 €"],1,
+ "Ist-Menge (2.000 Std.) · (21 – 20) = 2.000 €. Die Gesamtabweichung beträgt 10.000 € (50.000 – 40.000), die Verbrauchsabweichung 8.000 €.","Skript 7.4, Fallbeispiel 1");
+C(T8,"Gesamtabweichung in der Fertigung 10.000 €, Preisabweichung 2.000 €, Verbrauchsabweichung 8.000 € (Ist-Preis 21 €/Std., Plan-Preis 20 €/Std.). Wie hoch ist die reine Verbrauchsabweichung?",
+ ["380,95 €","7.619 €","8.000 €","8.381 €"],1,
+ "8.000 / 21 = 380,95 Std. · 20 € = 7.619 €. Die Abweichung 2. Grades beträgt 380,95 · 1 € = 381 €.","Skript 7.4, Fallbeispiel 1");
+C(T8,"Plan: 500 Stück (Material 20 €/Stk., Fertigung 4 Std. à 20 €, Gemeinkosten fix 5.000 € → Plankosten 55.000 €). Ist-Menge 400 Stück. Wie hoch sind die Soll-Kosten?",
+ ["44.000 €","45.000 €","52.000 €","55.000 €"],1,
+ "Material 400 · 20 = 8.000 + Fertigung 400 · 80 = 32.000 + fixe Gemeinkosten 5.000 = 45.000 €. Die verrechneten Plankosten betragen 55.000 / 500 · 400 = 44.000 €.","Skript 7.4, Fallbeispiel 2");
+C(T8,"Fallbeispiel 2: Ist-Kosten 52.000 €, Soll-Kosten 45.000 €, verrechnete Plankosten 44.000 €. Wie hoch sind Beschäftigungsabweichung und Preis-/Verbrauchsabweichung?",
+ ["Beschäftigungsabweichung 1.000 €, Preis-/Verbrauchsabweichung 7.000 €","Beschäftigungsabweichung 7.000 €, Preis-/Verbrauchsabweichung 1.000 €","Beschäftigungsabweichung 8.000 €, Preis-/Verbrauchsabweichung 0 €","Beschäftigungsabweichung 0 €, Preis-/Verbrauchsabweichung 8.000 €"],0,
+ "Soll – verrechnete Plankosten = 45.000 – 44.000 = 1.000 €. Ist – Soll = 52.000 – 45.000 = 7.000 €. Gesamtabweichung 8.000 €.","Skript 7.4, Fallbeispiel 2");
+
+
+(function(){
+'use strict';
+const KEY='klr-lernfragen-v1';
+const app=document.getElementById('app');
+
+/* ---------- Speicher ---------- */
+let store={stats:{},n:25};
+try{
+  const raw=JSON.parse(localStorage.getItem(KEY));
+  if(raw&&raw.stats) store=Object.assign(store,raw);
+}catch(e){}
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){} }
+
+/* ---------- Hilfsfunktionen ---------- */
+function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36);}
+QS.forEach(q=>{q.id=hash(q.t+'|'+q.q+'|'+q.o.join('|'));});
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function h(tag,attrs,...kids){
+  const el=document.createElement(tag);
+  if(attrs)for(const k in attrs){
+    const v=attrs[k];
+    if(k==='class')el.className=v;
+    else if(k.startsWith('on'))el.addEventListener(k.slice(2),v);
+    else if(v===true)el.setAttribute(k,'');
+    else if(v!==false&&v!=null)el.setAttribute(k,v);
+  }
+  kids.flat().forEach(c=>{ if(c==null||c===false)return; el.appendChild(typeof c==='string'?document.createTextNode(c):c); });
+  return el;
+}
+function bar(p,cls){return h('div',{class:'bar '+(cls||'')},h('i',{style:'width:'+Math.round(p*100)+'%'}));}
+function mount(...nodes){app.replaceChildren(...nodes.flat().filter(Boolean));window.scrollTo(0,0);}
+const stat=q=>store.stats[q.id];
+const isWrong=q=>{const s=stat(q);return s&&s.r==='w';};
+const isNew=q=>!stat(q);
+const isOk=q=>{const s=stat(q);return s&&s.r==='c';};
+
+/* ---------- Startseite ---------- */
+function home(){
+  const total=QS.length, ok=QS.filter(isOk).length, wrong=QS.filter(isWrong).length, fresh=QS.filter(isNew).length;
+
+  const lengthSeg=h('div',{class:'seg'},[10,25,50,0].map(n=>
+    h('button',{class:store.n===n?'on':'',onclick:()=>{store.n=n;save();home();}},n===0?'Alle':String(n))));
+
+  const quick=h('div',{class:'card'},
+    h('div',{class:'small'},'Fragen pro Runde'),
+    lengthSeg,
+    h('button',{class:'btn primary',onclick:()=>start(QS,store.n)},'Runde starten'),
+    h('div',{class:'btn-row'},
+      h('button',{class:'btn',disabled:!wrong,onclick:()=>start(QS.filter(isWrong),0)},'Falsche wiederholen ('+wrong+')'),
+      h('button',{class:'btn',disabled:!fresh,onclick:()=>start(QS.filter(isNew),store.n)},'Neue Fragen ('+fresh+')'))
+  );
+
+  const progress=h('div',{class:'card'},
+    h('div',{class:'top',style:'display:flex;justify-content:space-between;font-weight:600;margin-bottom:8px'},
+      h('span',null,'Fortschritt'),h('span',{class:'small'},ok+' von '+total+' richtig')),
+    bar(total?ok/total:0,'green'),
+    h('div',{class:'small',style:'margin-top:8px'},'Zählt, wenn die Frage zuletzt richtig beantwortet wurde.'));
+
+  const topicRows=TOPICS.map(t=>{
+    const pool=QS.filter(q=>q.t===t), o=pool.filter(isOk).length;
+    return h('button',{class:'row',onclick:()=>start(pool,store.n)},
+      h('div',{class:'top'},h('span',null,t),h('span',null,o+' / '+pool.length)),
+      bar(pool.length?o/pool.length:0,'green'));
+  });
+  const kindRows=Object.keys(KINDS).map(k=>{
+    const pool=QS.filter(q=>q.k===k), o=pool.filter(isOk).length;
+    return h('button',{class:'row',onclick:()=>start(pool,store.n)},
+      h('div',{class:'top'},h('span',null,KINDS_PL[k]),h('span',null,o+' / '+pool.length)),
+      bar(pool.length?o/pool.length:0,'green'));
+  });
+
+  mount(
+    h('h1',null,'KLR Lernfragen'),
+    h('p',{class:'sub'},total+' Fragen · Kosten- und Leistungsrechnung · eine Frage nach der anderen'),
+    progress,quick,
+    h('h2',null,'Nach Thema'),topicRows,
+    h('h2',null,'Nach Fragetyp'),kindRows,
+    h('div',{class:'center',style:'margin-top:18px'},
+      h('button',{class:'btn-link',onclick:()=>{
+        if(confirm('Gesamten Lernfortschritt zurücksetzen?')){store.stats={};save();home();}
+      }},'Fortschritt zurücksetzen'))
+  );
+}
+
+/* ---------- Runde zusammenstellen ---------- */
+function start(pool,n){
+  if(!pool.length)return;
+  const g=[[],[],[]];
+  pool.forEach(q=>{g[isNew(q)?0:isWrong(q)?1:2].push(q);});
+  let ordered=[].concat(shuffle(g[0]),shuffle(g[1]),shuffle(g[2]));
+  if(n&&n<ordered.length)ordered=ordered.slice(0,n);
+  sess={list:shuffle(ordered),i:0,res:[],view:null};
+  showQuestion();
+}
+let sess=null;
+
+/* ---------- Frage ---------- */
+function showQuestion(){
+  const q=sess.list[sess.i];
+  const idx=q.o.map((_,i)=>i);
+  const order=q.shuffle?shuffle(idx):idx;
+  const state={q,order,done:false};
+  sess.view=state;
+  const tf=q.k==='f';
+  const cut=q.q.lastIndexOf('\n\n');
+  const ctx=cut>0?q.q.slice(0,cut):'';
+  const ask=cut>0?q.q.slice(cut+2):q.q;
+  const optEls=order.map((oi,pos)=>{
+    const btn=h('button',{class:'opt'+(tf?' tf':''),onclick:()=>answer(oi,optEls)},
+      tf?null:h('span',{class:'L'},String.fromCharCode(65+pos)),
+      h('span',{class:'T'},q.o[oi]));
+    btn.dataset.oi=oi;
+    return btn;
+  });
+  state.optEls=optEls;
+
+  const fbBox=h('div',{id:'fb'});
+  const last=sess.i===sess.list.length-1;
+  const nextBtn=h('button',{class:'btn primary hidden',id:'next',onclick:next},last?'Ergebnis anzeigen':'Weiter');
+
+  mount(
+    h('div',{class:'qtop'},
+      h('div',{class:'grow'},
+        h('div',{class:'small',style:'margin-bottom:6px'},'Frage '+(sess.i+1)+' von '+sess.list.length),
+        bar(sess.i/sess.list.length)),
+      h('button',{class:'end',onclick:finish},'Beenden')),
+    h('div',{class:'chips'},
+      h('span',{class:'chip type'},KINDS[q.k]),
+      h('span',{class:'chip'},q.t),
+      q.s?h('span',{class:'chip'},q.s):null),
+    ctx?h('div',{class:'ctx'},ctx):null,
+    h('p',{class:'question'},ask),
+    tf?h('div',{class:'small',style:'margin:-8px 0 12px'},'Ist die Aussage richtig oder falsch?'):null,
+    h('div',{class:'opts'},optEls),
+    fbBox,
+    h('div',{class:'next'},nextBtn)
+  );
+}
+
+function answer(oi,optEls){
+  const st=sess.view; if(st.done)return; st.done=true;
+  const q=st.q, ok=oi===q.a;
+  optEls.forEach(b=>{
+    const i=+b.dataset.oi;
+    b.disabled=true;
+    if(i===q.a)b.classList.add('correct');
+    else if(i===oi)b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  sess.res.push({q,pick:oi,ok});
+  const s=store.stats[q.id]||(store.stats[q.id]={c:0,w:0,r:'c'});
+  if(ok){s.c++;s.r='c';}else{s.w++;s.r='w';}
+  save();
+
+  const fb=document.getElementById('fb');
+  fb.replaceChildren(h('div',{class:'fb '+(ok?'ok':'no'),role:'status'},
+    h('h3',null,ok?'Richtig!':'Leider falsch.'),
+    ok?null:h('p',null,'Richtige Antwort: '+q.o[q.a]),
+    q.e?h('p',null,q.e):null));
+  const nb=document.getElementById('next');
+  nb.classList.remove('hidden');
+  fb.firstChild.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+function next(){
+  if(sess.i<sess.list.length-1){sess.i++;showQuestion();}
+  else finish();
+}
+
+/* ---------- Ergebnis ---------- */
+function finish(){
+  if(!sess||!sess.res.length){home();return;}
+  const res=sess.res, n=res.length, ok=res.filter(r=>r.ok).length, pct=Math.round(ok/n*100);
+  const wrong=res.filter(r=>!r.ok);
+  const msg=pct>=90?'Sehr stark.':pct>=70?'Gut, weiter so.':pct>=50?'Solide Basis, die Erklärungen helfen beim Festigen.':'Noch Luft nach oben, wiederhole die falschen Fragen.';
+
+  const byTopic=TOPICS.map(t=>{
+    const r=res.filter(x=>x.q.t===t); if(!r.length)return null;
+    const o=r.filter(x=>x.ok).length;
+    return h('div',{style:'margin-bottom:10px'},
+      h('div',{style:'display:flex;justify-content:space-between;font-weight:600;margin-bottom:4px'},h('span',null,t),h('span',{class:'small'},o+' / '+r.length)),
+      bar(o/r.length,'green'));
+  });
+
+  const wrongList=wrong.map(r=>h('details',{class:'wr'},
+    h('summary',null,r.q.q.includes('\n\n')?r.q.q.slice(r.q.q.lastIndexOf('\n\n')+2):r.q.q),
+    h('div',{class:'in'},
+      h('p',null,h('span',{class:'ans-no'},'Deine Antwort: '),r.q.o[r.pick]),
+      h('p',null,h('span',{class:'ans-ok'},'Richtig: '),r.q.o[r.q.a]),
+      r.q.e?h('p',{class:'small'},r.q.e):null)));
+
+  const again=wrong.length?h('button',{class:'btn primary',onclick:()=>start(wrong.map(r=>r.q),0)},'Falsche wiederholen ('+wrong.length+')'):null;
+
+  mount(
+    h('h1',{class:'center'},'Runde beendet'),
+    h('div',{class:'score'},ok+' ',h('small',null,'von '+n+' richtig ('+pct+' %)')),
+    h('p',{class:'sub center'},msg),
+    h('div',{class:'card'},byTopic),
+    wrong.length?h('h2',null,'Falsch beantwortet'):null,
+    wrongList,
+    h('div',{style:'margin-top:14px;display:grid;gap:10px'},
+      again,
+      h('button',{class:'btn'+(again?'':' primary'),onclick:()=>start(QS,store.n)},'Neue Runde'),
+      h('button',{class:'btn',onclick:()=>{sess=null;home();}},'Zur Übersicht'))
+  );
+}
+
+/* ---------- Tastatur (iPad mit Tastatur / Desktop) ---------- */
+document.addEventListener('keydown',e=>{
+  if(!sess||!sess.view||!document.getElementById('next'))return;
+  const st=sess.view;
+  if(!st.done&&/^[1-9]$/.test(e.key)){
+    const b=st.optEls[+e.key-1]; if(b)b.click();
+  }else if(st.done&&(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')){
+    e.preventDefault();next();
+  }
+});
+
+home();
+})();
+</script>
+</body>
+</html>
